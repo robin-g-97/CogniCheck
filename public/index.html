@@ -2,6 +2,7 @@
 <html>
 <head>
     <script src="/js/shared/nav.js" defer></script>
+    <script src="/js/homepage.js" defer></script>
     <title>Cognicheck Analysis</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,15 +12,7 @@
 <body>
     <!-- nav.js looks for this element and inserts the navigation HTML into it. -->
     <div id="nav"></div>
-    <div class="textbox">
-        <h1>Welcome to Cognicheck!</h1>
-        <p>Analyze reports through cognitive psychology and data visualization principles.</p>
-        <form class="login-form" action="/login" method="post">
-            <label for="password">Demo password</label>
-            <input id="password" name="password" type="password" autocomplete="current-password" required>
-            <button class="button" type="submit">Enter demo</button>
-        </form>
-    </div>
+    <main id="homepage-content" class="homepage" aria-live="polite"></main>
     
 </body>
 

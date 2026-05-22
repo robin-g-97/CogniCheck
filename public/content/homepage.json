@@ -1,0 +1,129 @@
+{
+  "hero": {
+    "eyebrow": "CogniCheck",
+    "title": "Data understanding starts with understanding people.",
+    "subtitle": "Cognitive intelligence for BI and decision support.",
+    "body": [
+      "CogniCheck helps BI professionals improve the full dashboard trajectory: from requirements and assumptions, to blueprinting, to cognitive analysis of reports."
+    ],
+    "actions": [
+      {
+        "label": "Request a demo",
+        "href": "#demo",
+        "variant": "primary"
+      },
+      {
+        "label": "See how it works",
+        "href": "#how-it-works",
+        "variant": "secondary"
+      }
+    ]
+  },
+  "sections": [
+    {
+      "title": "Dashboards do not fail only because of data.",
+      "body": [
+        "Many dashboards are technically correct, but cognitively ineffective. Users struggle with unclear priorities, visual overload, hidden assumptions and reports that do not clearly support a decision.",
+        "CogniCheck helps teams design BI solutions around how people actually perceive, interpret and act on information."
+      ]
+    },
+    {
+      "id": "how-it-works",
+      "title": "What CogniCheck supports",
+      "cards": [
+        {
+          "title": "Requirements & assumptions",
+          "body": "Turn vague dashboard requests into sharper decision questions. Identify ambiguity, hidden assumptions and unclear stakeholder expectations."
+        },
+        {
+          "title": "Requirements to blueprint",
+          "body": "Translate business requirements into a structured BI blueprint: key metrics, data sources, modelling implications, risks and next steps."
+        },
+        {
+          "title": "Cognitive report analysis",
+          "body": "Analyze screenshots of reports using principles from cognitive psychology, including attention, gestalt structure, working memory and cognitive load."
+        },
+        {
+          "title": "Decision support",
+          "body": "Improve the link between data, interpretation and action, so dashboards become tools for better decisions rather than static reporting objects."
+        }
+      ]
+    },
+    {
+      "title": "Built on cognitive psychology",
+      "body": [
+        "CogniCheck looks at dashboards through the lens of human cognition. The goal is not only to make reports look better, but to make them easier to understand, easier to use and more useful for decision-making."
+      ],
+      "cards": [
+        {
+          "title": "Attention",
+          "body": "What receives the most visual emphasis, intentionally or unintentionally?"
+        },
+        {
+          "title": "Structure",
+          "body": "Are related metrics grouped in a way that supports interpretation?"
+        },
+        {
+          "title": "Working memory",
+          "body": "Does the user see the answer directly, or must they reconstruct it mentally?"
+        },
+        {
+          "title": "Change visibility",
+          "body": "Are deviations, comparisons and changes made explicit?"
+        }
+      ]
+    },
+    {
+      "id": "demo",
+      "title": "Try CogniCheck in a demo",
+      "body": [
+        "Upload a dashboard screenshot and receive a structured cognitive analysis with scores, observations and practical improvement suggestions.",
+        "CogniCheck can also help convert requirements documents into BI blueprints, making the early phase of dashboard development more explicit and testable."
+      ],
+      "actions": [
+        {
+          "label": "Send me a message",
+          "href": "mailto:your-email@example.com",
+          "variant": "primary"
+        }
+      ],
+      "login": {
+        "label": "Demo password",
+        "buttonLabel": "Enter demo"
+      }
+    },
+    {
+      "title": "Workshops and training",
+      "body": [
+        "CogniCheck is also available as a workshop or training concept for BI teams, controllers, analysts and dashboard developers."
+      ],
+      "list": [
+        "Cognitive load in dashboards",
+        "Requirements gathering for decision support",
+        "Dashboard design using psychology principles",
+        "Storytelling with data",
+        "From report builder to trusted advisor"
+      ]
+    },
+    {
+      "title": "About CogniCheck",
+      "body": [
+        "CogniCheck was created by Robin Groen, a BI analyst with a background in psychology, management and data analytics.",
+        "The project started from a simple belief: good BI is not only about data. It is about helping people understand complexity and make better decisions."
+      ]
+    },
+    {
+      "title": "Interested in a demo, pilot or workshop?",
+      "body": [
+        "I am currently looking for feedback, pilot users, workshop opportunities and conversations with BI professionals who want to build better decision support."
+      ],
+      "actions": [
+        {
+          "label": "Contact me",
+          "href": "mailto:your-email@example.com",
+          "variant": "primary"
+        }
+      ]
+    }
+  ]
+}

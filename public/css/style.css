@@ -87,6 +87,9 @@ nav {
   padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .button:hover {
@@ -95,6 +98,112 @@ nav {
 
 .button:link, .button:visited {
   color: white;
+}
+
+.button.secondary {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.button.secondary:hover {
+  background: var(--color-bg-green);
+}
+
+.button.secondary:link, .button.secondary:visited {
+  color: var(--color-text-primary);
+}
+
+.homepage {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 20px 80px;
+}
+
+.homepage section {
+  border-top: 1px solid var(--color-border);
+  padding: 44px 0;
+}
+
+.homepage section:first-child {
+  border-top: 0;
+}
+
+.hero {
+  max-width: 780px;
+  min-height: 52vh;
+  padding-top: 72px;
+}
+
+.eyebrow {
+  color: var(--color-amber);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.homepage h1 {
+  font-size: clamp(2.35rem, 6vw, 4.8rem);
+  line-height: 1;
+  margin: 0 0 20px;
+  max-width: 860px;
+}
+
+.homepage h2 {
+  font-size: clamp(1.65rem, 3vw, 2.5rem);
+  line-height: 1.12;
+  margin: 0 0 18px;
+  max-width: 760px;
+}
+
+.homepage h3 {
+  font-size: 1.05rem;
+  margin: 0 0 10px;
+}
+
+.homepage p {
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  max-width: 760px;
+}
+
+.homepage .subtitle {
+  color: var(--color-text-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cards {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  margin-top: 24px;
+}
+
+.cards article {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.cards article p {
+  margin-bottom: 0;
+}
+
+.homepage ul {
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  margin-top: 18px;
+  padding-left: 22px;
 }
 
 .login-form {

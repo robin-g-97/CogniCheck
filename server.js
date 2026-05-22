@@ -57,7 +57,9 @@ function requireLogin(req, res, next) {
     "/index.html",
     "/login",
     "/logout",
+    "/content/homepage.json",
     "/css/style.css",
+    "/js/homepage.js",
     "/js/shared/nav.js",
     "/favicon.ico"
   ]);
