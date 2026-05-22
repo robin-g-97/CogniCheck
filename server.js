@@ -38,7 +38,7 @@ function requirePassword(req, res, next) {
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cors());
-
+app.use(requirePassword);
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(analyzeImageRoutes);
