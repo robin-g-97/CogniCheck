@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cognicheck</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!--
+        Mammoth is a browser library that extracts text from .docx files.
+        The local scripts below run after the HTML is loaded because they use "defer".
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js" defer></script>
+    <script src="/js/shared/api.js" defer></script>
+    <script src="/js/requirements/file-reader.js" defer></script>
+    <script src="/js/requirements/render-blueprint.js" defer></script>
+    <script src="/js/requirements/requirements-page.js" defer></script>
+    <script src="/js/shared/nav.js" defer></script>
+</head>
+<body>
+    <!-- nav.js looks for this element and inserts the navigation HTML into it. -->
+    <div id="nav"></div>
+    <div class="header">
+        <h1>Cognicheck requirements to blueprint</h1>
+    </div>
+
+    <div class="textbox">
+        <p>Welcome to the requirements to blueprint tool...</p>
+    </div>
+
+    <div class="textbox">
+            <input type="file" id="fileInput"
+                accept=".txt,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+                onchange="openRequirements(event)">
+        <!-- </div> -->
+    </div>
+
+    <div class="textbox">
+        <button id="generateButton" class="button" onclick="analyzeRequirements()">Generate Blueprint</button>
+        <div id="result-container" style="margin-top: 20px; display: none;">
+            <h3>Generated Blueprint:</h3>
+            <div id="blueprintOutput"></div>
+        </div>
+    </div>
+</body>
+</html>

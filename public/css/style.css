@@ -1,0 +1,142 @@
+/* style.css — define once at the top, use everywhere */
+:root {
+  /* Primary */
+  --color-amber:          #D97706;
+  --color-amber-light:    #F59E0B;
+
+  /* Secondary */
+  --color-green:          #16A34A;
+
+  /* Backgrounds */
+  --color-bg-page:        #FAFAF7;
+  --color-bg-card:        #FFFFFF;
+  --color-bg-amber:       #FEF3C7;
+  --color-bg-green:       #DCFCE7;
+
+  /* Text */
+  --color-text-primary:   #1C1917;
+  --color-text-secondary: #78716C;
+
+  /* Borders */
+  --color-border:         #E7E5E4;
+}
+
+/* 1. Global styles */
+
+/* 1. Global styles */
+head {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+.parent-element {
+  display: flex;
+  gap: 0px;
+  align-items: flex-start;  /* columns start at the top, don't stretch to equal height */
+}
+
+.textbox {
+  flex: 1;                  /* each column takes equal width */
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1%;
+  color: var(--color-text-primary);
+  max-width: 800px;
+  line-height: 1.6;
+  margin-left: 1%;
+  margin-right: 1%;
+  margin-top: 1%;
+}
+
+.textbox:first-child {
+  flex: 1;   /* input column — 1 part */
+}
+
+.textbox:last-child {
+  flex: 2;   /* output column — 2 parts */
+}
+/* 2. Navigation */
+nav {
+  background-color: var(--color-bg-card);
+  padding: 16px 32px;
+  color: var(--color-text-primary);
+}
+
+/* 3. Main content */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+
+/* 4. Buttons */
+.button {
+  background-color: var(--color-amber);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: var(--color-green);
+}
+
+.button:link, .button:visited {
+  color: white;
+}
+
+
+#dropzone {
+  border: 2px dashed var(--color-amber);   /* amber dashed line */
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-items: center;
+}
+
+#dropzone.dragover {
+  background: var(--color-bg-amber);          /* light amber on hover */
+}
+
+
+@media print {
+    @page {
+        margin: 16mm;
+    }
+
+    body * {
+        visibility: hidden;  /* hide everything */
+    }
+
+    #analysis-report,
+    #analysis-report * {
+        visibility: visible;  /* show only the report and its children */
+    }
+
+    #analysis-report {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        color: #000;
+        background: #fff;
+    }
+
+    #print-report {
+        display: none;
+    }
+}

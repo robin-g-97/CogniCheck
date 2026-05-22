@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <!--
+        These scripts run in the browser, not in Node.js.
+        "defer" means: download the scripts now, but run them after the HTML has been read.
+        The order matters because analyze-page.js uses functions/variables from the files above it.
+    -->
+    <script src="/js/shared/api.js" defer></script>
+    <script src="/js/analysis/image-upload.js" defer></script>
+    <script src="/js/analysis/render-analysis.js" defer></script>
+    <script src="/js/analysis/analyze-page.js" defer></script>
+    <script src="/js/shared/nav.js" defer></script>
+
+    
+    <title>Cognicheck Analysis</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+<!-- nav.js looks for this element and inserts the navigation HTML into it. -->
+<div id="nav"></div>
+<div class = "parent-element">
+    <div class="textbox">
+            <p>Upload an image:</p>
+            <!-- <input type='file' accept='image/*' onchange='openFile(event)'> -->
+    <!-- Replace the input with this block. -->
+        <div id="dropzone" onclick="document.getElementById('fileInput').click()">
+        <p>📂 Drag and drop a screenshot
+
+        <small>or click to choose a file</small></p>
+        <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="openFile(event)">
+        <img id='output' style="max-height:400px; max-width:100%; display:block; margin-top:15px;">
+        </div>
+
+        </div>
+
+    <div class = "textbox">
+        <!-- This calls analyzeImage() from /js/analysis/analyze-page.js. -->
+        <button id="analyze-button" onclick="analyzeImage()" class="button">
+        Perform CogniCheck Analysis
+        </button>
+        <div id="result-container" style="margin-top: 20px; display: none;">
+        <button id="print-report" onclick="printAnalysisReport()" class="button">
+            Print Report
+        </button>
+            <div id="analysis-report">
+                <h3>Result:</h3>
+                <pre id="json-output"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+    
+</body>
+
+</html>
