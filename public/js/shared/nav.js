@@ -9,6 +9,7 @@ if (nav) {
       <a href="/" style="color: var(--color-text-primary); font-weight: 700; text-decoration: none;">CogniCheck</a>
       <a href="/Analysis.html" style="color: var(--color-amber); margin-left: 20px;">Analysis</a>
       <a href="/requirements-page.html" style="color: var(--color-amber); margin-left: 20px;">Requirements to Blueprint</a>
+      <a href="/logout" style="color: var(--color-amber); margin-left: 20px;">Log out</a>
     </nav>
   `;
 }
