@@ -83,6 +83,68 @@ function createLoginForm(loginContent) {
   return form;
 }
 
+function createField(id, labelText, type = "text") {
+  const group = createElement("div", { className: "form-field" });
+  const label = createElement("label", { text: labelText });
+  label.htmlFor = id;
+
+  const input = createElement("input");
+  input.id = id;
+  input.name = id;
+  input.type = type;
+  input.required = true;
+
+  group.append(label, input);
+  return { group, input };
+}
+
+function createContactForm(contactContent) {
+  const form = createElement("form", { className: "contact-form" });
+
+  const nameField = createField("contact-name", contactContent.nameLabel);
+  const emailField = createField("contact-email", contactContent.emailLabel, "email");
+
+  const messageGroup = createElement("div", { className: "form-field" });
+  const messageLabel = createElement("label", { text: contactContent.messageLabel });
+  messageLabel.htmlFor = "contact-message";
+
+  const messageInput = createElement("textarea");
+  messageInput.id = "contact-message";
+  messageInput.name = "contact-message";
+  messageInput.placeholder = contactContent.messagePlaceholder;
+  messageInput.required = true;
+  messageInput.rows = 5;
+
+  messageGroup.append(messageLabel, messageInput);
+
+  const button = createElement("button", {
+    className: "button primary",
+    text: contactContent.buttonLabel
+  });
+  button.type = "submit";
+
+  form.append(nameField.group, emailField.group, messageGroup, button);
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+
+    const body = [
+      `Name: ${nameField.input.value}`,
+      `Email: ${emailField.input.value}`,
+      "",
+      messageInput.value
+    ].join("\n");
+
+    const mailtoUrl = new URL(`mailto:${contactContent.recipient}`);
+    mailtoUrl.searchParams.set("subject", contactContent.subject);
+    mailtoUrl.searchParams.set("body", body);
+
+    window.location.href = mailtoUrl.toString();
+  });
+
+  return form;
+}
+
 function createSection(sectionContent, extraClass = "") {
   const section = createElement("section", {
     id: sectionContent.id,
@@ -113,6 +175,10 @@ function createSection(sectionContent, extraClass = "") {
 
   if (sectionContent.actions) {
     section.appendChild(createActions(sectionContent.actions));
+  }
+
+  if (sectionContent.contactForm) {
+    section.appendChild(createContactForm(sectionContent.contactForm));
   }
 
   if (sectionContent.login) {

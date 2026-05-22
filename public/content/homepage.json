@@ -83,10 +83,19 @@
       "actions": [
         {
           "label": "Send me a message",
-          "href": "mailto:your-email@example.com",
+          "href": "mailto:robin.g.1997@gmail.com",
           "variant": "primary"
         }
       ],
+      "contactForm": {
+        "recipient": "robin.g.1997@gmail.com",
+        "subject": "CogniCheck demo request",
+        "nameLabel": "Name",
+        "emailLabel": "Email",
+        "messageLabel": "Message",
+        "messagePlaceholder": "Tell me what you would like to try or discuss.",
+        "buttonLabel": "Send message"
+      },
       "login": {
         "label": "Demo password",
         "buttonLabel": "Enter demo"
@@ -120,10 +129,19 @@
       "actions": [
         {
           "label": "Contact me",
-          "href": "mailto:your-email@example.com",
+          "href": "mailto:robin.g.1997@gmail.com",
           "variant": "primary"
         }
-      ]
+      ],
+      "contactForm": {
+        "recipient": "robin.g.1997@gmail.com",
+        "subject": "CogniCheck contact",
+        "nameLabel": "Name",
+        "emailLabel": "Email",
+        "messageLabel": "Message",
+        "messagePlaceholder": "Share a few words about your demo, pilot or workshop idea.",
+        "buttonLabel": "Send message"
+      }
     }
   ]
 }

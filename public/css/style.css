@@ -206,23 +206,40 @@ nav {
   padding-left: 22px;
 }
 
-.login-form {
+.login-form,
+.contact-form {
   display: grid;
   gap: 12px;
   max-width: 360px;
   margin-top: 24px;
 }
 
-.login-form label {
+.contact-form {
+  max-width: 540px;
+}
+
+.login-form label,
+.contact-form label {
   font-weight: 700;
 }
 
-.login-form input {
+.form-field {
+  display: grid;
+  gap: 6px;
+}
+
+.login-form input,
+.contact-form input,
+.contact-form textarea {
   border: 1px solid var(--color-border);
   border-radius: 6px;
   color: var(--color-text-primary);
   font: inherit;
   padding: 10px 12px;
+}
+
+.contact-form textarea {
+  resize: vertical;
 }
 
 
