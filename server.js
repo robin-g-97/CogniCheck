@@ -57,10 +57,13 @@ function requireLogin(req, res, next) {
     "/index.html",
     "/login",
     "/logout",
+    "/session",
     "/content/homepage.json",
     "/css/style.css",
     "/js/homepage.js",
     "/js/shared/nav.js",
+    "/analysis-screenshot.png",
+    "/portrait.png",
     "/favicon.ico"
   ]);
 
@@ -103,6 +106,10 @@ app.post("/login", (req, res) => {
 app.get("/logout", (req, res) => {
   res.clearCookie(sessionCookieName);
   res.redirect("/");
+});
+
+app.get("/session", (req, res) => {
+  res.json({ authenticated: hasValidSession(req) });
 });
 
 app.use(requireLogin);

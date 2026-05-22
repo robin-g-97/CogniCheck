@@ -34,16 +34,42 @@ function createActions(actions = []) {
   return row;
 }
 
+// Media helper: used by the hero and about section.
+function createImage(imageContent, className) {
+  const image = createElement("img", { className });
+  image.src = imageContent.src;
+  image.alt = imageContent.alt;
+  image.loading = "lazy";
+
+  // If the image file is not present yet, hide the empty image box.
+  image.addEventListener("error", () => {
+    image.style.display = "none";
+  });
+
+  return image;
+}
+
 function createCard(card) {
   const article = createElement("article");
   article.appendChild(createElement("h3", { text: card.title }));
   article.appendChild(createElement("p", { text: card.body }));
 
+  if (card.href) {
+    const link = createElement("a", {
+      className: "card-link",
+      text: card.label || "Open"
+    });
+    link.href = card.href;
+    article.appendChild(link);
+  }
+
   return article;
 }
 
-function createCards(cards = []) {
-  const grid = createElement("div", { className: "cards" });
+function createCards(cards = [], cardStyle = "") {
+  const grid = createElement("div", {
+    className: ["cards", cardStyle === "navigation" ? "demo-cards" : ""].filter(Boolean).join(" ")
+  });
   cards.forEach(card => grid.appendChild(createCard(card)));
 
   return grid;
@@ -56,6 +82,19 @@ function createList(items = []) {
   });
 
   return list;
+}
+
+// Workflow helper: creates a simple numbered flow from JSON.
+function createSteps(steps = []) {
+  const flow = createElement("ol", { className: "workflow-steps" });
+
+  steps.forEach(step => {
+    const item = createElement("li");
+    item.appendChild(createElement("span", { text: step }));
+    flow.appendChild(item);
+  });
+
+  return flow;
 }
 
 function createLoginForm(loginContent) {
@@ -145,52 +184,87 @@ function createContactForm(contactContent) {
   return form;
 }
 
-function createSection(sectionContent, extraClass = "") {
-  const section = createElement("section", {
-    id: sectionContent.id,
-    className: extraClass
-  });
-
+function appendSectionText(parent, sectionContent, headingTag) {
   if (sectionContent.eyebrow) {
-    section.appendChild(createElement("p", {
+    parent.appendChild(createElement("p", {
       className: "eyebrow",
       text: sectionContent.eyebrow
     }));
   }
 
   if (sectionContent.title) {
-    section.appendChild(createElement(extraClass === "hero" ? "h1" : "h2", {
-      text: sectionContent.title
-    }));
+    parent.appendChild(createElement(headingTag, { text: sectionContent.title }));
   }
 
   if (sectionContent.subtitle) {
-    section.appendChild(createElement("p", {
+    parent.appendChild(createElement("p", {
       className: "subtitle",
       text: sectionContent.subtitle
     }));
   }
 
-  appendParagraphs(section, sectionContent.body);
+  appendParagraphs(parent, sectionContent.body);
+}
+
+// Hero section: text on the left, screenshot on the right.
+function createHero(heroContent) {
+  const section = createElement("section", { className: "hero" });
+  const textColumn = createElement("div", { className: "hero-content" });
+
+  appendSectionText(textColumn, heroContent, "h1");
+
+  if (heroContent.actions) {
+    textColumn.appendChild(createActions(heroContent.actions));
+  }
+
+  section.appendChild(textColumn);
+
+  if (heroContent.image) {
+    const mediaColumn = createElement("div", { className: "hero-media" });
+    mediaColumn.appendChild(createImage(heroContent.image, "hero-image"));
+    section.appendChild(mediaColumn);
+  }
+
+  return section;
+}
+
+function createSection(sectionContent, extraClass = "") {
+  const section = createElement("section", {
+    id: sectionContent.id,
+    className: [extraClass, sectionContent.layout === "media" ? "media-section" : ""].filter(Boolean).join(" ")
+  });
+
+  const content = createElement("div", { className: "section-content" });
+  appendSectionText(content, sectionContent, "h2");
 
   if (sectionContent.actions) {
-    section.appendChild(createActions(sectionContent.actions));
+    content.appendChild(createActions(sectionContent.actions));
   }
 
   if (sectionContent.contactForm) {
-    section.appendChild(createContactForm(sectionContent.contactForm));
+    content.appendChild(createContactForm(sectionContent.contactForm));
   }
 
   if (sectionContent.login) {
-    section.appendChild(createLoginForm(sectionContent.login));
-  }
-
-  if (sectionContent.cards) {
-    section.appendChild(createCards(sectionContent.cards));
+    content.appendChild(createLoginForm(sectionContent.login));
   }
 
   if (sectionContent.list) {
-    section.appendChild(createList(sectionContent.list));
+    content.appendChild(createList(sectionContent.list));
+  }
+
+  if (sectionContent.steps) {
+    content.appendChild(createSteps(sectionContent.steps));
+  }
+
+  section.appendChild(content);
+
+  if (sectionContent.cards) {
+    section.appendChild(createCards(sectionContent.cards, sectionContent.cardStyle));
+  }
+
+  if (sectionContent.image) {
+    section.appendChild(createImage(sectionContent.image, "section-image"));
   }
 
   return section;
@@ -201,7 +275,7 @@ async function renderHomepage() {
     const response = await fetch("/content/homepage.json");
     const content = await response.json();
 
-    homepageRoot.appendChild(createSection(content.hero, "hero"));
+    homepageRoot.appendChild(createHero(content.hero));
     content.sections.forEach(section => {
       homepageRoot.appendChild(createSection(section));
     });

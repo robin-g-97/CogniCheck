@@ -9,99 +9,121 @@
     "actions": [
       {
         "label": "Request a demo",
-        "href": "#demo",
+        "href": "#contact",
         "variant": "primary"
       },
       {
         "label": "See how it works",
-        "href": "#how-it-works",
+        "href": "#workflow",
         "variant": "secondary"
       }
-    ]
+    ],
+    "image": {
+      "src": "/analysis-screenshot.png",
+      "alt": "CogniCheck analysis screenshot"
+    }
   },
   "sections": [
     {
-      "title": "Dashboards do not fail only because of data.",
-      "body": [
-        "Many dashboards are technically correct, but cognitively ineffective. Users struggle with unclear priorities, visual overload, hidden assumptions and reports that do not clearly support a decision.",
-        "CogniCheck helps teams design BI solutions around how people actually perceive, interpret and act on information."
-      ]
-    },
-    {
-      "id": "how-it-works",
+      "id": "features",
       "title": "What CogniCheck supports",
+      "body": [
+        "CogniCheck supports the full BI design process, from early requirements to dashboard improvement."
+      ],
       "cards": [
         {
           "title": "Requirements & assumptions",
-          "body": "Turn vague dashboard requests into sharper decision questions. Identify ambiguity, hidden assumptions and unclear stakeholder expectations."
+          "body": "Turn vague dashboard requests into clearer decision questions and expose hidden assumptions early."
         },
         {
           "title": "Requirements to blueprint",
-          "body": "Translate business requirements into a structured BI blueprint: key metrics, data sources, modelling implications, risks and next steps."
+          "body": "Translate business needs into a practical BI blueprint with metrics, data sources, risks and next steps."
         },
         {
           "title": "Cognitive report analysis",
-          "body": "Analyze screenshots of reports using principles from cognitive psychology, including attention, gestalt structure, working memory and cognitive load."
+          "body": "Review dashboard screenshots using attention, structure, working memory and cognitive load principles."
         },
         {
           "title": "Decision support",
-          "body": "Improve the link between data, interpretation and action, so dashboards become tools for better decisions rather than static reporting objects."
+          "body": "Improve the link between data, interpretation and action so dashboards support real decisions."
         }
       ]
     },
     {
+      "id": "why",
+      "title": "Why this matters",
+      "body": [
+        "BI teams often deal with ineffective dashboards, scattered data, weak KPIs, dashboard chaos and conflicting sources of truth.",
+        "CogniCheck helps create clarity by making assumptions, requirements, cognitive load and decision context more explicit."
+      ]
+    },
+    {
+      "id": "workflow",
+      "title": "How CogniCheck works",
+      "body": [
+        "A simple workflow helps teams move from vague dashboard needs to clearer, more useful decision support."
+      ],
+      "steps": [
+        "Gather requirements",
+        "Identify assumptions",
+        "Generate blueprint",
+        "Analyze dashboard cognition",
+        "Improve decision support"
+      ]
+    },
+    {
+      "id": "methodology",
       "title": "Built on cognitive psychology",
       "body": [
-        "CogniCheck looks at dashboards through the lens of human cognition. The goal is not only to make reports look better, but to make them easier to understand, easier to use and more useful for decision-making."
+        "CogniCheck uses cognitive psychology principles to reduce cognitive overload and improve dashboard understanding."
       ],
       "cards": [
         {
           "title": "Attention",
-          "body": "What receives the most visual emphasis, intentionally or unintentionally?"
+          "body": "Make the most important information stand out so users know where to look first."
         },
         {
           "title": "Structure",
-          "body": "Are related metrics grouped in a way that supports interpretation?"
+          "body": "Group related metrics clearly so users can understand the dashboard faster."
         },
         {
           "title": "Working memory",
-          "body": "Does the user see the answer directly, or must they reconstruct it mentally?"
+          "body": "Reduce mental effort by showing answers directly instead of forcing users to calculate them."
         },
         {
           "title": "Change visibility",
-          "body": "Are deviations, comparisons and changes made explicit?"
+          "body": "Make comparisons, deviations and trends visible so action becomes easier."
         }
       ]
     },
     {
-      "id": "demo",
+      "id": "demo-access",
       "title": "Try CogniCheck in a demo",
       "body": [
-        "Upload a dashboard screenshot and receive a structured cognitive analysis with scores, observations and practical improvement suggestions.",
-        "CogniCheck can also help convert requirements documents into BI blueprints, making the early phase of dashboard development more explicit and testable."
+        "Use the demo password to access the analysis tools and test the dashboard review flow."
       ],
-      "actions": [
-        {
-          "label": "Send me a message",
-          "href": "mailto:robin.g.1997@gmail.com",
-          "variant": "primary"
-        }
-      ],
-      "contactForm": {
-        "recipient": "robin.g.1997@gmail.com",
-        "subject": "CogniCheck demo request",
-        "nameLabel": "Name",
-        "emailLabel": "Email",
-        "messageLabel": "Message",
-        "messagePlaceholder": "Tell me what you would like to try or discuss.",
-        "buttonLabel": "Send message"
-      },
       "login": {
         "label": "Demo password",
         "buttonLabel": "Enter demo"
-      }
+      },
+      "cards": [
+        {
+          "title": "Cognitive analysis",
+          "body": "Upload a dashboard screenshot and receive a structured review with scores, observations and improvement suggestions.",
+          "href": "/Analysis.html",
+          "label": "Go to analysis"
+        },
+        {
+          "title": "Requirements to blueprint",
+          "body": "Upload requirements and turn them into a clearer BI blueprint with metrics, risks and next steps.",
+          "href": "/requirements-page.html",
+          "label": "Go to blueprint"
+        }
+      ],
+      "cardStyle": "navigation"
     },
     {
+      "id": "workshops",
       "title": "Workshops and training",
       "body": [
         "CogniCheck is also available as a workshop or training concept for BI teams, controllers, analysts and dashboard developers."
@@ -115,23 +137,23 @@
       ]
     },
     {
+      "id": "about",
       "title": "About CogniCheck",
       "body": [
         "CogniCheck was created by Robin Groen, a BI analyst with a background in psychology, management and data analytics.",
         "The project started from a simple belief: good BI is not only about data. It is about helping people understand complexity and make better decisions."
-      ]
+      ],
+      "image": {
+        "src": "/portrait.png",
+        "alt": "Portrait of Robin Groen"
+      },
+      "layout": "media"
     },
     {
+      "id": "contact",
       "title": "Interested in a demo, pilot or workshop?",
       "body": [
         "I am currently looking for feedback, pilot users, workshop opportunities and conversations with BI professionals who want to build better decision support."
-      ],
-      "actions": [
-        {
-          "label": "Contact me",
-          "href": "mailto:robin.g.1997@gmail.com",
-          "variant": "primary"
-        }
       ],
       "contactForm": {
         "recipient": "robin.g.1997@gmail.com",
@@ -140,7 +162,7 @@
         "emailLabel": "Email",
         "messageLabel": "Message",
         "messagePlaceholder": "Share a few words about your demo, pilot or workshop idea.",
-        "buttonLabel": "Send message"
+        "buttonLabel": "Submit"
       }
     }
   ]

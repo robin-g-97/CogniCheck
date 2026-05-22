@@ -65,10 +65,82 @@ body {
   flex: 2;   /* output column — 2 parts */
 }
 /* 2. Navigation */
+/* The nav is shared by every page, so these styles stay simple and flexible. */
 nav {
   background-color: var(--color-bg-card);
-  padding: 16px 32px;
   color: var(--color-text-primary);
+}
+
+.site-nav {
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  padding: 16px 32px;
+}
+
+.nav-brand {
+  color: var(--color-text-primary);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.nav-links {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.nav-links a {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: var(--color-text-primary);
+}
+
+.nav-links .nav-demo-button {
+  background: var(--color-amber);
+  border-radius: 6px;
+  color: white;
+  padding: 9px 14px;
+}
+
+.nav-links .nav-demo-button:hover {
+  background: var(--color-green);
+  color: white;
+}
+
+/* Demo navigation */
+/* This small second nav appears only after the server says the user is logged in. */
+.demo-nav {
+  align-items: center;
+  background: var(--color-bg-amber);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 10px 32px;
+}
+
+.demo-nav span {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.demo-nav a {
+  color: var(--color-amber);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.demo-nav a:hover {
+  color: var(--color-green);
 }
 
 /* 3. Main content */
@@ -114,25 +186,70 @@ nav {
   color: var(--color-text-primary);
 }
 
+/* Homepage layout */
+/* The main container is wider than before, but still has side padding on mobile. */
 .homepage {
-  max-width: 1080px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 48px 20px 80px;
+  padding: 56px 24px 96px;
 }
 
+/* Section spacing: generous vertical rhythm makes the page feel calmer. */
 .homepage section {
   border-top: 1px solid var(--color-border);
-  padding: 44px 0;
+  padding: 72px 0;
 }
 
 .homepage section:first-child {
   border-top: 0;
+  padding-top: 28px;
 }
 
+.homepage section:nth-child(odd):not(.hero) {
+  background: rgba(255, 255, 255, 0.45);
+  margin-left: -24px;
+  margin-right: -24px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* Hero section */
+/* Desktop uses two columns: message on the left, product screenshot on the right. */
 .hero {
-  max-width: 780px;
-  min-height: 52vh;
-  padding-top: 72px;
+  align-items: center;
+  display: grid;
+  gap: 40px;
+  grid-template-columns: minmax(420px, 0.86fr) minmax(560px, 1.14fr);
+  min-height: 60vh;
+}
+
+.hero-content {
+  max-width: 640px;
+}
+
+.hero-media {
+  display: flex;
+  justify-content: center;
+  margin-right: -40px;
+}
+
+.hero-image,
+.section-image {
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(28, 25, 23, 0.14);
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.hero-image {
+  width: min(720px, 100%);
+}
+
+.section-image {
+  max-height: 360px;
+  object-fit: cover;
 }
 
 .eyebrow {
@@ -140,72 +257,163 @@ nav {
   font-size: 0.85rem;
   font-weight: 800;
   letter-spacing: 0;
+  margin-bottom: 14px;
   text-transform: uppercase;
 }
 
 .homepage h1 {
-  font-size: clamp(2.35rem, 6vw, 4.8rem);
-  line-height: 1;
-  margin: 0 0 20px;
-  max-width: 860px;
+  font-size: clamp(2.4rem, 6vw, 4.7rem);
+  line-height: 1.02;
+  margin: 0 0 22px;
+  max-width: 760px;
 }
 
 .homepage h2 {
-  font-size: clamp(1.65rem, 3vw, 2.5rem);
-  line-height: 1.12;
-  margin: 0 0 18px;
-  max-width: 760px;
+  font-size: clamp(1.75rem, 3vw, 2.65rem);
+  line-height: 1.14;
+  margin: 0 0 20px;
+  max-width: 780px;
 }
 
 .homepage h3 {
-  font-size: 1.05rem;
-  margin: 0 0 10px;
+  font-size: 1.12rem;
+  margin: 0 0 12px;
 }
 
+/* Readability */
+/* Slightly larger body text and more line height make longer sections easier to scan. */
 .homepage p {
-  color: var(--color-text-secondary);
-  font-size: 1rem;
-  max-width: 760px;
+  color: #44403C;
+  font-size: 1.06rem;
+  line-height: 1.75;
+  margin: 0 0 16px;
+  max-width: 780px;
 }
 
 .homepage .subtitle {
   color: var(--color-text-primary);
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 700;
+  line-height: 1.45;
+}
+
+.section-content {
+  max-width: 820px;
 }
 
 .cta-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 24px;
+  gap: 14px;
+  margin-top: 28px;
 }
 
+/* Card layout */
+/* Cards use equal-height grid rows so repeated content feels balanced. */
 .cards {
   display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  margin-top: 24px;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: 32px;
 }
 
 .cards article {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(28, 25, 23, 0.06);
+  display: flex;
+  flex-direction: column;
+  min-height: 160px;
+  padding: 28px;
 }
 
 .cards article p {
+  flex: 1;
   margin-bottom: 0;
 }
 
-.homepage ul {
-  color: var(--color-text-secondary);
-  line-height: 1.8;
+.card-link {
+  color: var(--color-amber);
+  font-weight: 800;
   margin-top: 18px;
-  padding-left: 22px;
+  text-decoration: none;
 }
 
+.card-link:hover {
+  color: var(--color-green);
+}
+
+/* Demo navigator */
+/* These cards help logged-in demo users find the two tool pages quickly. */
+.demo-cards {
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+}
+
+.demo-cards article {
+  border-color: rgba(217, 119, 6, 0.28);
+}
+
+.homepage ul {
+  color: #44403C;
+  font-size: 1.05rem;
+  line-height: 1.85;
+  margin-top: 22px;
+  padding-left: 24px;
+}
+
+/* Workflow section */
+/* The ordered list becomes a horizontal flow on desktop. */
+.workflow-steps {
+  counter-reset: workflow;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(5, 1fr);
+  list-style: none;
+  margin: 32px 0 0;
+  padding: 0;
+}
+
+.workflow-steps li {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  counter-increment: workflow;
+  min-height: 130px;
+  padding: 22px;
+  position: relative;
+}
+
+.workflow-steps li::before {
+  background: var(--color-bg-amber);
+  border-radius: 999px;
+  color: var(--color-amber);
+  content: counter(workflow);
+  display: inline-grid;
+  font-weight: 800;
+  height: 32px;
+  margin-bottom: 16px;
+  place-items: center;
+  width: 32px;
+}
+
+.workflow-steps span {
+  display: block;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+/* About section */
+/* Media sections place an image next to the text on desktop. */
+.media-section {
+  align-items: center;
+  display: grid;
+  gap: 42px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.65fr);
+}
+
+/* Contact section */
+/* Both forms share basic field styling, but only the contact form appears in the contact section. */
 .login-form,
 .contact-form {
   display: grid;
@@ -240,6 +448,78 @@ nav {
 
 .contact-form textarea {
   resize: vertical;
+}
+
+/* Mobile styles */
+/* On smaller screens, two-column layouts stack vertically and spacing tightens. */
+@media (max-width: 900px) {
+  .site-nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero,
+  .media-section {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-media {
+    margin-right: 0;
+  }
+
+  .workflow-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    gap: 32px;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-nav {
+    padding: 14px 20px;
+  }
+
+  .nav-links {
+    gap: 12px;
+  }
+
+  .demo-nav {
+    padding: 10px 20px;
+  }
+
+  .nav-links .nav-demo-button {
+    width: 100%;
+  }
+
+  .homepage {
+    padding: 32px 18px 72px;
+  }
+
+  .homepage section {
+    padding: 52px 0;
+  }
+
+  .homepage section:nth-child(odd):not(.hero) {
+    margin-left: -18px;
+    margin-right: -18px;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .button {
+    width: 100%;
+  }
 }
 
 
