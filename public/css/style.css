@@ -362,6 +362,155 @@ nav {
   padding-left: 24px;
 }
 
+/* Requirements to blueprint page */
+/* These styles are scoped so the older analysis demo keeps its current layout. */
+.requirements-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 24px 88px;
+}
+
+.requirements-hero {
+  margin-bottom: 28px;
+}
+
+.requirements-hero h1 {
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  line-height: 1.05;
+  margin: 0 0 16px;
+  max-width: 820px;
+}
+
+.requirements-hero p {
+  color: #44403C;
+  font-size: 1.18rem;
+  font-weight: 700;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 860px;
+}
+
+.requirements-section {
+  margin-top: 24px;
+}
+
+.requirements-section h2,
+.requirements-card h2 {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  margin: 0 0 14px;
+}
+
+.requirements-card h3 {
+  font-size: 1.08rem;
+  margin: 0 0 10px;
+}
+
+.requirements-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(28, 25, 23, 0.05);
+  margin-top: 18px;
+  padding: 28px;
+}
+
+.requirements-card p {
+  color: #44403C;
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+
+.requirements-card p:last-child {
+  margin-bottom: 0;
+}
+
+.requirements-note {
+  color: var(--color-text-secondary);
+  font-weight: 700;
+}
+
+.requirements-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 16px;
+}
+
+.requirements-grid .requirements-card {
+  margin-top: 0;
+  min-height: 150px;
+}
+
+.requirements-checklist {
+  display: grid;
+  gap: 12px 20px;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+}
+
+.requirements-checklist li {
+  align-items: center;
+  color: #44403C;
+  display: flex;
+  font-weight: 700;
+  gap: 10px;
+  line-height: 1.45;
+}
+
+.requirements-checklist li::before {
+  background: var(--color-bg-amber);
+  border-radius: 999px;
+  color: var(--color-amber);
+  content: "+";
+  display: inline-grid;
+  flex: 0 0 24px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  height: 24px;
+  place-items: center;
+  width: 24px;
+}
+
+.requirements-upload input[type="file"] {
+  background: var(--color-bg-page);
+  border: 1px dashed var(--color-amber);
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: var(--color-text-primary);
+  display: block;
+  font: inherit;
+  margin-top: 18px;
+  max-width: 100%;
+  padding: 18px;
+  width: 100%;
+}
+
+.requirements-actions {
+  align-items: flex-start;
+  display: flex;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.requirements-actions .requirements-note {
+  margin: 0;
+  max-width: 560px;
+}
+
+.requirements-result {
+  border-top: 1px solid var(--color-border);
+  display: none;
+  margin-top: 28px;
+  padding-top: 24px;
+}
+
+.requirements-result h3 {
+  margin-top: 0;
+}
+
 /* Workflow section */
 /* The ordered list becomes a horizontal flow on desktop. */
 .workflow-steps {
@@ -475,6 +624,10 @@ nav {
     gap: 32px;
     min-height: auto;
   }
+
+  .requirements-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -519,6 +672,22 @@ nav {
 
   .button {
     width: 100%;
+  }
+
+  .requirements-page {
+    padding: 32px 18px 72px;
+  }
+
+  .requirements-card {
+    padding: 22px;
+  }
+
+  .requirements-checklist {
+    grid-template-columns: 1fr;
+  }
+
+  .requirements-actions {
+    flex-direction: column;
   }
 }
 

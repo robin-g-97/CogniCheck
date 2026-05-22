@@ -108,16 +108,16 @@
       },
       "cards": [
         {
-          "title": "Cognitive analysis",
-          "body": "Upload a dashboard screenshot and receive a structured review with scores, observations and improvement suggestions.",
-          "href": "/Analysis.html",
-          "label": "Go to analysis"
-        },
-        {
           "title": "Requirements to blueprint",
           "body": "Upload requirements and turn them into a clearer BI blueprint with metrics, risks and next steps.",
           "href": "/requirements-page.html",
           "label": "Go to blueprint"
+        },
+        {
+          "title": "Cognitive analysis",
+          "body": "Upload a dashboard screenshot and receive a structured review with scores, observations and improvement suggestions.",
+          "href": "/Analysis.html",
+          "label": "Go to analysis"
         }
       ],
       "cardStyle": "navigation"

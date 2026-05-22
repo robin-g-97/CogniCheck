@@ -26,8 +26,8 @@ if (nav) {
       nav.insertAdjacentHTML("beforeend", `
         <nav class="demo-nav" aria-label="Demo pages">
           <span>Demo pages</span>
-          <a href="/Analysis.html">Analysis demo</a>
           <a href="/requirements-page.html">Blueprint demo</a>
+          <a href="/Analysis.html">Analysis demo</a>
           <a href="/logout">Log out</a>
         </nav>
       `);
