@@ -74,7 +74,7 @@ router.post("/api/analyze-report", async (req, res) => {
         ...fileParts,
         { inline_data: { mime_type: image.mimeType, data: image.base64 } }
       ],
-      ...(mode === "import" && {
+      ...(["import", "analysis"].includes(mode) && {
         generationConfig: { responseMimeType: "application/json" }
       })
     });

@@ -187,8 +187,8 @@ async function performCogniCheckAnalysis() {
       structuredContext
     });
 
-    analysisResult = getGeminiText(data);
-    renderAnalysisText(analysisResult);
+    analysisResult = parseJsonResponse(getGeminiText(data));
+    renderAnalysisResult(analysisResult);
   } catch (error) {
     console.error("Analysis failed:", error);
     analysisError = error.message;
@@ -219,10 +219,24 @@ function renderStructuredContextFields() {
   container.style.display = "block";
 }
 
-function renderAnalysisText(text) {
+function renderAnalysisResult(result) {
   const report = document.getElementById("analysis-report");
   document.getElementById("print-report").style.display = "inline-flex";
-  report.innerHTML = `<h2>CogniCheck analysis result</h2><div class="analysis-result-text">${formatPlainText(text)}</div>`;
+
+  report.innerHTML = `
+    <h2>CogniCheck analysis result</h2>
+    <div class="analysis-result-text">
+      ${renderExecutiveSummary(result.executive_summary)}
+      ${renderAnalysisSection("2. Cognitive load score", result.cognitive_load)}
+      ${renderAnalysisSection("3. Decision alignment score", result.decision_alignment)}
+      ${renderAnalysisSection("4. Context alignment", result.context_alignment)}
+      ${renderAnalysisSection("5. Cognitive psychology analysis", result.cognitive_psychology_analysis)}
+      ${renderAnalysisSection("6. Decision-support analysis", result.decision_support_analysis)}
+      ${renderAnalysisSection("7. Key risks", result.key_risks)}
+      ${renderAnalysisSection("8. Recommendations", result.recommendations)}
+      ${renderAnalysisSection("9. Missing context", result.missing_context)}
+    </div>
+  `;
 }
 
 function setImportLoadingState() {
@@ -269,8 +283,70 @@ function normalizeStructuredContext(value) {
 }
 
 function parseJsonResponse(text) {
-  const cleanText = text.replace(/```json|```/g, "").trim();
+  const cleanText = text
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
+
+  if (!cleanText.startsWith("{")) {
+    const jsonStart = cleanText.indexOf("{");
+    const jsonEnd = cleanText.lastIndexOf("}");
+
+    if (jsonStart >= 0 && jsonEnd > jsonStart) {
+      return JSON.parse(cleanText.slice(jsonStart, jsonEnd + 1));
+    }
+  }
+
   return JSON.parse(cleanText);
+}
+
+function renderExecutiveSummary(summary = {}) {
+  return `
+    <section class="analysis-result-section analysis-summary">
+      <div class="analysis-section-heading">
+        <h3>1. Executive summary</h3>
+        ${renderScore(summary.total_score, "Total score")}
+      </div>
+      ${summary.maturity_level ? `<p><strong>Maturity level:</strong> ${escapeHtml(summary.maturity_level)}</p>` : ""}
+      ${summary.summary ? `<p>${escapeHtml(summary.summary)}</p>` : ""}
+      ${summary.most_important_improvement ? `<p><strong>Most important improvement:</strong> ${escapeHtml(summary.most_important_improvement)}</p>` : ""}
+    </section>
+  `;
+}
+
+function renderAnalysisSection(title, section = {}) {
+  return `
+    <section class="analysis-result-section">
+      <div class="analysis-section-heading">
+        <h3>${escapeHtml(title)}</h3>
+        ${renderScore(section.score, "Score")}
+      </div>
+      ${section.assessment ? `<p>${escapeHtml(section.assessment)}</p>` : ""}
+      ${renderList("Strengths", section.strengths)}
+      ${renderList("Weaknesses", section.weaknesses)}
+      ${renderList("Improvement points", section.improvement_points)}
+    </section>
+  `;
+}
+
+function renderScore(score, label) {
+  const numericScore = Number(score);
+  const displayScore = Number.isFinite(numericScore) ? `${numericScore}/10` : "Not scored";
+  return `<span class="score-pill">${escapeHtml(label)}: ${escapeHtml(displayScore)}</span>`;
+}
+
+function renderList(title, items) {
+  const safeItems = Array.isArray(items) ? items.slice(0, 3) : [];
+  if (safeItems.length === 0) return "";
+
+  return `
+    <div class="analysis-list-group">
+      <strong>${escapeHtml(title)}</strong>
+      <ul>
+        ${safeItems.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+      </ul>
+    </div>
+  `;
 }
 
 function getGeminiText(data) {
@@ -338,7 +414,7 @@ function formatPlainText(text) {
     }
 
     const numberedHeadingMatch = trimmed.match(/^(\d+\.\s+.+)$/);
-    if (numberedHeadingMatch && trimmed.length < 90) {
+    if (numberedHeadingMatch && isAnalysisSectionHeading(trimmed)) {
       return `<h3>${formatInlineMarkdown(numberedHeadingMatch[1])}</h3>`;
     }
 
@@ -353,6 +429,20 @@ function formatPlainText(text) {
 
 function formatInlineMarkdown(text) {
   return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+
+function isAnalysisSectionHeading(line) {
+  return [
+    "1. Executive summary",
+    "2. Cognitive load score, 1-10",
+    "3. Decision alignment score, 1-10",
+    "4. Context alignment",
+    "5. Cognitive psychology analysis",
+    "6. Decision-support analysis",
+    "7. Key risks",
+    "8. Recommendations",
+    "9. Missing context"
+  ].some(sectionHeading => line.toLowerCase() === sectionHeading.toLowerCase());
 }
 
 // Backwards-compatible name for the previous button handler.

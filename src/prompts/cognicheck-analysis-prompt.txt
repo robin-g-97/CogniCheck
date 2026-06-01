@@ -221,25 +221,107 @@ Context and audience alignment:
 
 OUTPUT FORMAT
 
-Return a plain text analysis with exactly these sections and section titles:
+ALWAYS output one valid JSON object.
+Do not output Markdown.
+Do not output text before or after the JSON.
+Do not wrap the JSON in code fences.
+Scores must be numbers from 1 to 10, not strings.
+Use null only when a value is genuinely unknown.
 
-1. Executive summary
-2. Cognitive load score, 1-10
-3. Decision alignment score, 1-10
-4. Context alignment
-5. Cognitive psychology analysis
-6. Decision-support analysis
-7. Key risks
-8. Recommendations
-9. Missing context
+Use this exact JSON structure:
+
+{
+  "executive_summary": {
+    "total_score": 1,
+    "maturity_level": "Level 1 - Data dump or spreadsheet-like report",
+    "summary": "Short direct summary of whether the report supports the intended decision.",
+    "most_important_improvement": "The single highest-leverage action the user can take."
+  },
+  "cognitive_load": {
+    "score": 1,
+    "assessment": "Short assessment.",
+    "strengths": ["At most 3 concrete strengths."],
+    "weaknesses": ["At most 3 concrete weaknesses."],
+    "improvement_points": ["At most 3 directly actionable improvement points."]
+  },
+  "decision_alignment": {
+    "score": 1,
+    "assessment": "Short assessment.",
+    "strengths": ["At most 3 concrete strengths."],
+    "weaknesses": ["At most 3 concrete weaknesses."],
+    "improvement_points": ["At most 3 directly actionable improvement points."]
+  },
+  "context_alignment": {
+    "score": 1,
+    "assessment": "Short assessment.",
+    "strengths": ["At most 3 concrete strengths."],
+    "weaknesses": ["At most 3 concrete weaknesses."],
+    "improvement_points": ["At most 3 directly actionable improvement points."]
+  },
+  "cognitive_psychology_analysis": {
+    "score": 1,
+    "assessment": "Short assessment.",
+    "strengths": ["At most 3 concrete strengths."],
+    "weaknesses": ["At most 3 concrete weaknesses."],
+    "improvement_points": ["At most 3 directly actionable improvement points."]
+  },
+  "decision_support_analysis": {
+    "score": 1,
+    "assessment": "Short assessment.",
+    "strengths": ["At most 3 concrete strengths."],
+    "weaknesses": ["At most 3 concrete weaknesses."],
+    "improvement_points": ["At most 3 directly actionable improvement points."]
+  },
+  "key_risks": {
+    "score": 1,
+    "assessment": "Short assessment of risk severity.",
+    "strengths": ["At most 3 risk-reducing strengths, or \"None observed\"."],
+    "weaknesses": ["At most 3 key risks."],
+    "improvement_points": ["At most 3 directly actionable risk-reduction changes."]
+  },
+  "recommendations": {
+    "score": 1,
+    "assessment": "Short assessment of expected improvement potential.",
+    "strengths": ["At most 3 existing design choices to preserve."],
+    "weaknesses": ["At most 3 improvement blockers."],
+    "improvement_points": ["At most 3 highest-leverage directly actionable recommendations."]
+  },
+  "missing_context": {
+    "score": 1,
+    "assessment": "Short assessment of how missing context affects confidence.",
+    "strengths": ["At most 3 context elements that are already clear, or \"None observed\"."],
+    "weaknesses": ["At most 3 missing context items."],
+    "improvement_points": ["At most 3 directly actionable ways to add or clarify context."]
+  }
+}
+
+JSON field rules:
+- Replace all placeholder/example text in the JSON structure with your actual analysis.
+- Keep every array to 0-3 items.
+- If there are no meaningful strengths, use ["None observed"].
+- If there are no meaningful weaknesses, use ["None observed"].
+- If no immediate improvement is needed, use ["No immediate improvement needed"].
+- The total_score must be a reasoned overall score, not a simple average. It should reflect cognitive load, decision alignment, context fit, risks and improvement potential.
+- The maturity_level must be one of the four maturity levels defined above.
+
+Directly actionable improvement points must:
+- Say what to change in the report.
+- Say where or for which visual/section to change it when possible.
+- Avoid vague advice such as "make it clearer", "improve layout" or "add context" unless you specify exactly how.
+
+Examples of directly actionable improvement wording:
+- Add a target line to the median rent trend chart and label whether the current value is above or below target.
+- Replace the separate opname and aanbod number blocks with one grouped KPI band that shows current value, prior period and delta side by side.
+- Use one accent color only for negative deviations and remove decorative colors from non-actionable labels.
 
 Writing rules:
-- Do not output JSON.
+- Output JSON only.
 - Do not output Markdown.
 - Do not use asterisks.
 - Keep the executive summary short and direct.
-- Mention the overall maturity level in the executive summary.
+- Mention the overall maturity level in executive_summary.maturity_level.
 - Be stricter than a generic design review.
 - Avoid vague praise.
+- Use at most three strengths, at most three weaknesses and at most three improvement points per section.
 - Focus recommendations on the highest-leverage changes.
-- Make the Missing context section explicit, even if the answer is that no major missing context was found.
+- Make missing_context explicit, even if the answer is that no major missing context was found.
