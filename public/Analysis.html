@@ -12,7 +12,6 @@
     <script src="/js/analysis/analyze-page.js" defer></script>
     <script src="/js/shared/nav.js" defer></script>
 
-    
     <title>Cognicheck Analysis</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,38 +22,68 @@
 <body>
 <!-- nav.js looks for this element and inserts the navigation HTML into it. -->
 <div id="nav"></div>
-<div class = "parent-element">
-    <div class="textbox">
-            <p>Upload an image:</p>
-            <!-- <input type='file' accept='image/*' onchange='openFile(event)'> -->
-    <!-- Replace the input with this block. -->
-        <div id="dropzone" onclick="document.getElementById('fileInput').click()">
-        <p>📂 Drag and drop a screenshot
 
-        <small>or click to choose a file</small></p>
-        <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="openFile(event)">
-        <img id='output' style="max-height:400px; max-width:100%; display:block; margin-top:15px;">
-        </div>
+<main class="analysis-page">
+    <section class="analysis-column analysis-input">
+        <h1>CogniCheck Analysis</h1>
 
-        </div>
-
-    <div class = "textbox">
-        <!-- This calls analyzeImage() from /js/analysis/analyze-page.js. -->
-        <button id="analyze-button" onclick="analyzeImage()" class="button">
-        Perform CogniCheck Analysis
-        </button>
-        <div id="result-container" style="margin-top: 20px; display: none;">
-        <button id="print-report" onclick="printAnalysisReport()" class="button">
-            Print Report
-        </button>
-            <div id="analysis-report">
-                <h3>Result:</h3>
-                <pre id="json-output"></pre>
+        <div class="analysis-section">
+            <label for="fileInput">Upload report screenshot</label>
+            <div id="dropzone" onclick="document.getElementById('fileInput').click()">
+                <p>Upload or drop a screenshot
+                    <small>or click to choose a file</small>
+                </p>
+                <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+                <img id="output" class="analysis-preview" alt="">
             </div>
         </div>
-    </div>
-</div>
-    
+
+        <div class="analysis-section">
+            <label for="supportingFilesInput">Upload supporting files</label>
+            <p class="field-help">Optional: upload requirements, notes, KPI definitions or other context documents.</p>
+            <input type="file" id="supportingFilesInput" accept=".txt,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple onchange="handleSupportingFileUpload(event)">
+            <p id="supporting-file-summary" class="field-help"></p>
+        </div>
+
+        <div class="analysis-section">
+            <label for="backgroundContext">Background context</label>
+            <textarea id="backgroundContext" rows="9" oninput="handleBackgroundContextChange(event)" placeholder="Describe the report, audience, purpose, decisions supported, KPI definitions, known concerns, or anything else that may help CogniCheck understand the report.
+
+Example:
+Monthly finance dashboard for business controllers. Used during monthly management meetings to monitor budget deviations and decide whether corrective action is needed."></textarea>
+        </div>
+
+        <div class="analysis-section">
+            <label for="selectedLanguage">Output language</label>
+            <select id="selectedLanguage" onchange="handleLanguageChange(event)">
+                <option value="English" selected>English</option>
+                <option value="Dutch">Dutch</option>
+            </select>
+        </div>
+
+        <button id="import-button" onclick="importReport()" class="button">Import report</button>
+        <p id="import-error" class="analysis-error"></p>
+
+        <div id="structured-context-container" class="structured-context" style="display: none;">
+            <p class="structured-note">CogniCheck has drafted structured report context from the screenshot and any information you provided. Please review and correct these fields before running the full analysis.</p>
+            <div id="structured-context-fields"></div>
+            <button id="analyze-button" onclick="performCogniCheckAnalysis()" class="button">Perform CogniCheck Analysis</button>
+            <p id="analysis-error" class="analysis-error"></p>
+        </div>
+    </section>
+
+    <section class="analysis-column analysis-output">
+        <div id="result-container">
+            <button id="print-report" onclick="printAnalysisReport()" class="button secondary" style="display: none;">Print Report</button>
+            <div id="analysis-report">
+                <h2>Analysis output</h2>
+                <p>Upload a report screenshot, add optional context, then import the report. After reviewing the structured context, run the full CogniCheck analysis here.</p>
+            </div>
+            <pre id="json-output" style="display: none;"></pre>
+        </div>
+    </section>
+</main>
+
 </body>
 
 </html>

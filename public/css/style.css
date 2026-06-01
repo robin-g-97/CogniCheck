@@ -64,6 +64,146 @@ body {
 .textbox:last-child {
   flex: 2;   /* output column — 2 parts */
 }
+
+/* Analysis demo page */
+.analysis-page {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(420px, 1.25fr);
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 24px;
+}
+
+.analysis-column {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(28, 25, 23, 0.04);
+  padding: 24px;
+}
+
+.analysis-input h1,
+.analysis-output h2 {
+  margin-top: 0;
+}
+
+.analysis-section {
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 18px;
+}
+
+.analysis-section:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.analysis-section label,
+.structured-group label {
+  font-weight: 800;
+}
+
+.analysis-section input[type="file"],
+.analysis-section select,
+.analysis-section textarea,
+.structured-group textarea {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: var(--color-text-primary);
+  font: inherit;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+.analysis-section textarea,
+.structured-group textarea {
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.field-help,
+.structured-note {
+  color: var(--color-text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.readonly-context {
+  background: #F5F5F4;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.structured-context {
+  border-top: 1px solid var(--color-border);
+  margin-top: 22px;
+  padding-top: 22px;
+}
+
+.structured-group {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+  padding: 18px;
+}
+
+.structured-group legend {
+  color: var(--color-amber);
+  font-weight: 800;
+  padding: 0 8px;
+}
+
+.analysis-error {
+  color: #B91C1C;
+  font-weight: 700;
+  margin: 10px 0 0;
+}
+
+.analysis-preview {
+  display: block;
+  margin-top: 15px;
+  max-height: 400px;
+  max-width: 100%;
+}
+
+.analysis-result-text {
+  line-height: 1.7;
+  white-space: normal;
+}
+
+.analysis-result-text h3 {
+  font-size: 1.2rem;
+  line-height: 1.35;
+  margin: 26px 0 10px;
+}
+
+.analysis-result-text p {
+  margin: 0 0 14px;
+}
+
+.analysis-bullet {
+  margin: 0 0 10px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.analysis-bullet::before {
+  content: "•";
+  left: 4px;
+  position: absolute;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
 /* 2. Navigation */
 /* The nav is shared by every page, so these styles stay simple and flexible. */
 nav {
@@ -628,6 +768,10 @@ nav {
   .requirements-grid {
     grid-template-columns: 1fr;
   }
+
+  .analysis-page {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -688,6 +832,14 @@ nav {
 
   .requirements-actions {
     flex-direction: column;
+  }
+
+  .analysis-page {
+    padding: 18px;
+  }
+
+  .analysis-column {
+    padding: 20px;
   }
 }
 

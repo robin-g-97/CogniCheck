@@ -376,7 +376,6 @@ Recommended endpoints:
 ```txt
 POST /api/analyze-report
 POST /api/analyze-requirements
-GET  /api/analysis-prompt
 ```
 
 The current `/analyze` endpoint works, but `/api/analyze-report` is clearer and grouped with other API routes.
@@ -393,7 +392,6 @@ Examples:
 GEMINI_API_KEY=...
 GEMINI_MODEL=gemini-2.5-flash-lite
 PORT=3000
-ANALYSIS_PROMPT=...
 ```
 
 Important rule:
@@ -402,7 +400,7 @@ Important rule:
 - Frontend cannot read `process.env` directly.
 - Anything sent from the backend to the frontend becomes visible in the browser.
 
-Keep `GEMINI_API_KEY` server-side only.
+Keep `GEMINI_API_KEY` server-side only. Long report-analysis prompts should also stay server-side in `src/prompts/` if you do not want users to see them in browser DevTools.
 
 ## Suggested Migration Plan
 

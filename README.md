@@ -49,12 +49,11 @@ Create a `.env` file in the project root:
 GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=gemini-2.5-flash-lite
 APP_PASSWORD=optional_demo_password
-ANALYSIS_PROMPT=optional_default_image_analysis_prompt
 REQUIREMENTS_BLUEPRINT_PROMPT=requirements_analysis_prompt_with_optional_{{requirements}}_placeholder
 PORT=3000
 ```
 
-`GEMINI_API_KEY` and `REQUIREMENTS_BLUEPRINT_PROMPT` are required for AI analysis. `APP_PASSWORD` is optional; when it is not set, the app runs without login protection. If `REQUIREMENTS_BLUEPRINT_PROMPT` includes `{{requirements}}`, the uploaded requirements text is inserted there. Otherwise, the text is appended to the prompt automatically.
+`GEMINI_API_KEY` and `REQUIREMENTS_BLUEPRINT_PROMPT` are required for AI analysis. `APP_PASSWORD` is optional; when it is not set, the app runs without login protection. The CogniCheck report analysis prompt lives server-side in `src/prompts/`, so it does not need to be configured in Railway. If `REQUIREMENTS_BLUEPRINT_PROMPT` includes `{{requirements}}`, the uploaded requirements text is inserted there. Otherwise, the text is appended to the prompt automatically.
 
 ## Running Locally
 
@@ -85,7 +84,7 @@ http://localhost:3000
 ## API Routes
 
 - `POST /analyze` - analyzes an uploaded image with a prompt
-- `GET /analysisprompt` - returns the configured image analysis prompt
+- `POST /api/analyze-report` - imports report context or performs full CogniCheck analysis with server-side prompts
 - `POST /api/analyze-requirements` - analyzes requirements text and returns generated blueprint content
 - `POST /login` - starts a password-protected session when `APP_PASSWORD` is set
 - `GET /logout` - clears the session

@@ -1,5 +1,9 @@
 const express = require("express");
 const { callGemini } = require("../services/gemini");
+const {
+  buildFinalAnalysisPrompt,
+  buildImportPrompt
+} = require("../prompts/cognicheck-analysis");
 
 const router = express.Router();
 
@@ -27,10 +31,58 @@ router.post("/analyze", async (req, res) => {
   }
 });
 
-router.get("/analysisprompt", (req, res) => {
-  res.json({
-    prompt: process.env.ANALYSIS_PROMPT || "Default prompt if not set in .env"
-  });
+router.post("/api/analyze-report", async (req, res) => {
+  const {
+    mode,
+    image,
+    supportingFiles,
+    selectedLanguage,
+    backgroundContext,
+    extractedDocumentText,
+    structuredContext
+  } = req.body;
+
+  if (!mode || !image?.base64 || !image?.mimeType) {
+    return res.status(400).json({ error: "Missing mode or image data." });
+  }
+
+  if (!["import", "analysis"].includes(mode)) {
+    return res.status(400).json({ error: "Invalid analysis mode." });
+  }
+
+  try {
+    const prompt =
+      mode === "import"
+        ? buildImportPrompt({ selectedLanguage, backgroundContext, extractedDocumentText })
+        : buildFinalAnalysisPrompt({
+            selectedLanguage,
+            backgroundContext,
+            extractedDocumentText,
+            structuredContext
+          });
+
+    const fileParts = (supportingFiles || []).map(file => ({
+      inline_data: {
+        mime_type: file.mimeType,
+        data: file.base64
+      }
+    }));
+
+    const data = await callGemini({
+      parts: [
+        { text: prompt },
+        ...fileParts,
+        { inline_data: { mime_type: image.mimeType, data: image.base64 } }
+      ],
+      ...(mode === "import" && {
+        generationConfig: { responseMimeType: "application/json" }
+      })
+    });
+
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;
