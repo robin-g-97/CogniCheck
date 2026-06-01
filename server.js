@@ -5,8 +5,10 @@ const cors = require("cors");
 const crypto = require("crypto");
 const path = require("path");
 
+const analyticsRoutes = require("./src/routes/analytics");
 const analyzeImageRoutes = require("./src/routes/analyze-image");
 const analyzeRequirementsRoutes = require("./src/routes/analyze-requirements");
+const { trackPageView } = require("./src/services/analytics-db");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -61,6 +63,7 @@ function requireLogin(req, res, next) {
     "/content/homepage.json",
     "/css/style.css",
     "/js/homepage.js",
+    "/js/analytics-page.js",
     "/js/shared/nav.js",
     "/analysis-screenshot.png",
     "/portrait.png",
@@ -113,8 +116,20 @@ app.get("/session", (req, res) => {
 });
 
 app.use(requireLogin);
+
+app.use((req, res, next) => {
+  const trackedPages = new Set(["/", "/index.html", "/Analysis.html", "/requirements-page.html", "/analytics.html"]);
+
+  if (req.method === "GET" && trackedPages.has(req.path)) {
+    trackPageView(req);
+  }
+
+  next();
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use(analyticsRoutes);
 app.use(analyzeImageRoutes);
 app.use(analyzeRequirementsRoutes);
 

@@ -28,6 +28,7 @@ if (nav) {
           <span>Demo pages</span>
           <a href="/requirements-page.html">Blueprint demo</a>
           <a href="/Analysis.html">Analysis demo</a>
+          <a href="/analytics.html">Analytics</a>
           <a href="/logout">Log out</a>
         </nav>
       `);

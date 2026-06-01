@@ -4,6 +4,10 @@ const {
   buildFinalAnalysisPrompt,
   buildImportPrompt
 } = require("../prompts/cognicheck-analysis");
+const {
+  trackAnalysisEvent,
+  trackPrompt
+} = require("../services/analytics-db");
 
 const router = express.Router();
 
@@ -61,6 +65,9 @@ router.post("/api/analyze-report", async (req, res) => {
             structuredContext
           });
 
+    // Store the generated text prompt for review, but never store image Base64 here.
+    await trackPrompt({ mode, selectedLanguage, prompt });
+
     const fileParts = (supportingFiles || []).map(file => ({
       inline_data: {
         mime_type: file.mimeType,
@@ -79,8 +86,16 @@ router.post("/api/analyze-report", async (req, res) => {
       })
     });
 
+    await trackAnalysisEvent({ mode, selectedLanguage, success: true });
     res.json(data);
   } catch (error) {
+    await trackAnalysisEvent({
+      mode,
+      selectedLanguage,
+      success: false,
+      error: error.message
+    });
+
     res.status(500).json({ error: error.message });
   }
 });

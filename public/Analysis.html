@@ -61,24 +61,24 @@ Monthly finance dashboard for business controllers. Used during monthly manageme
             </select>
         </div>
 
-        <button id="import-button" onclick="importReport()" class="button">Import report</button>
+        <button id="import-button" onclick="importReport()" class="button analysis-action-button">Import report</button>
         <p id="import-error" class="analysis-error"></p>
 
         <div id="structured-context-container" class="structured-context" style="display: none;">
             <p class="structured-note">CogniCheck has drafted structured report context from the screenshot and any information you provided. Please review and correct these fields before running the full analysis.</p>
             <div id="structured-context-fields"></div>
-            <button id="analyze-button" onclick="performCogniCheckAnalysis()" class="button">Perform CogniCheck Analysis</button>
+            <button id="analyze-button" onclick="performCogniCheckAnalysis()" class="button analysis-action-button">Perform CogniCheck Analysis</button>
             <p id="analysis-error" class="analysis-error"></p>
         </div>
     </section>
 
     <section class="analysis-column analysis-output">
         <div id="result-container">
-            <button id="print-report" onclick="printAnalysisReport()" class="button secondary" style="display: none;">Print Report</button>
             <div id="analysis-report">
                 <h2>Analysis output</h2>
                 <p>Upload a report screenshot, add optional context, then import the report. After reviewing the structured context, run the full CogniCheck analysis here.</p>
             </div>
+            <button id="print-report" onclick="printAnalysisReport()" class="button secondary analysis-print-button" style="display: none;">Print Report</button>
             <pre id="json-output" style="display: none;"></pre>
         </div>
     </section>

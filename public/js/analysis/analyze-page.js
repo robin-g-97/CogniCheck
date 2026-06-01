@@ -58,6 +58,53 @@ const structuredFieldGroups = [
   }
 ];
 
+const analysisLabels = {
+  English: {
+    resultTitle: "CogniCheck analysis result",
+    totalScore: "Total score",
+    score: "Score",
+    maturityLevel: "Maturity level",
+    mostImportantImprovement: "Most important improvement",
+    printReport: "Print Report",
+    executiveSummary: "1. Executive summary",
+    sections: {
+      cognitiveLoad: "2. Cognitive load score",
+      decisionAlignment: "3. Decision alignment score",
+      contextAlignment: "4. Context alignment",
+      cognitivePsychology: "5. Cognitive psychology analysis",
+      decisionSupport: "6. Decision-support analysis",
+      keyRisks: "7. Key risks",
+      recommendations: "8. Recommendations",
+      missingContext: "9. Missing context"
+    },
+    strengths: "Strengths",
+    weaknesses: "Weaknesses",
+    improvementPoints: "Improvement points"
+  },
+  Dutch: {
+    resultTitle: "CogniCheck analyseresultaat",
+    totalScore: "Totaalscore",
+    score: "Score",
+    maturityLevel: "Volwassenheidsniveau",
+    mostImportantImprovement: "Belangrijkste verbetering",
+    printReport: "Print rapport",
+    executiveSummary: "1. Managementsamenvatting",
+    sections: {
+      cognitiveLoad: "2. Score cognitieve belasting",
+      decisionAlignment: "3. Score beslissingsondersteuning",
+      contextAlignment: "4. Contextafstemming",
+      cognitivePsychology: "5. Cognitief-psychologische analyse",
+      decisionSupport: "6. Analyse beslissingsondersteuning",
+      keyRisks: "7. Belangrijkste risico's",
+      recommendations: "8. Aanbevelingen",
+      missingContext: "9. Ontbrekende context"
+    },
+    strengths: "Sterke punten",
+    weaknesses: "Zwakke punten",
+    improvementPoints: "Verbeterpunten"
+  }
+};
+
 // Reads supporting files. Text files are extracted in the browser; PDF and DOCX are attached to Gemini.
 // TODO: Add local PDF text extraction when a PDF parser dependency is introduced.
 // TODO: Add local DOCX text extraction when a DOCX parser dependency is introduced.
@@ -221,20 +268,24 @@ function renderStructuredContextFields() {
 
 function renderAnalysisResult(result) {
   const report = document.getElementById("analysis-report");
-  document.getElementById("print-report").style.display = "inline-flex";
+  const labels = getAnalysisLabels();
+  const printButton = document.getElementById("print-report");
+
+  printButton.innerText = labels.printReport;
+  printButton.style.display = "inline-flex";
 
   report.innerHTML = `
-    <h2>CogniCheck analysis result</h2>
+    <h2>${escapeHtml(labels.resultTitle)}</h2>
     <div class="analysis-result-text">
-      ${renderExecutiveSummary(result.executive_summary)}
-      ${renderAnalysisSection("2. Cognitive load score", result.cognitive_load)}
-      ${renderAnalysisSection("3. Decision alignment score", result.decision_alignment)}
-      ${renderAnalysisSection("4. Context alignment", result.context_alignment)}
-      ${renderAnalysisSection("5. Cognitive psychology analysis", result.cognitive_psychology_analysis)}
-      ${renderAnalysisSection("6. Decision-support analysis", result.decision_support_analysis)}
-      ${renderAnalysisSection("7. Key risks", result.key_risks)}
-      ${renderAnalysisSection("8. Recommendations", result.recommendations)}
-      ${renderAnalysisSection("9. Missing context", result.missing_context)}
+      ${renderExecutiveSummary(result.executive_summary, labels)}
+      ${renderAnalysisSection(labels.sections.cognitiveLoad, result.cognitive_load, labels)}
+      ${renderAnalysisSection(labels.sections.decisionAlignment, result.decision_alignment, labels)}
+      ${renderAnalysisSection(labels.sections.contextAlignment, result.context_alignment, labels)}
+      ${renderAnalysisSection(labels.sections.cognitivePsychology, result.cognitive_psychology_analysis, labels)}
+      ${renderAnalysisSection(labels.sections.decisionSupport, result.decision_support_analysis, labels)}
+      ${renderAnalysisSection(labels.sections.keyRisks, result.key_risks, labels)}
+      ${renderAnalysisSection(labels.sections.recommendations, result.recommendations, labels)}
+      ${renderAnalysisSection(labels.sections.missingContext, result.missing_context, labels)}
     </div>
   `;
 }
@@ -300,31 +351,31 @@ function parseJsonResponse(text) {
   return JSON.parse(cleanText);
 }
 
-function renderExecutiveSummary(summary = {}) {
+function renderExecutiveSummary(summary = {}, labels = getAnalysisLabels()) {
   return `
     <section class="analysis-result-section analysis-summary">
       <div class="analysis-section-heading">
-        <h3>1. Executive summary</h3>
-        ${renderScore(summary.total_score, "Total score")}
+        <h3>${escapeHtml(labels.executiveSummary)}</h3>
+        ${renderScore(summary.total_score, labels.totalScore)}
       </div>
-      ${summary.maturity_level ? `<p><strong>Maturity level:</strong> ${escapeHtml(summary.maturity_level)}</p>` : ""}
+      ${summary.maturity_level ? `<p><strong>${escapeHtml(labels.maturityLevel)}:</strong> ${escapeHtml(summary.maturity_level)}</p>` : ""}
       ${summary.summary ? `<p>${escapeHtml(summary.summary)}</p>` : ""}
-      ${summary.most_important_improvement ? `<p><strong>Most important improvement:</strong> ${escapeHtml(summary.most_important_improvement)}</p>` : ""}
+      ${summary.most_important_improvement ? `<p><strong>${escapeHtml(labels.mostImportantImprovement)}:</strong> ${escapeHtml(summary.most_important_improvement)}</p>` : ""}
     </section>
   `;
 }
 
-function renderAnalysisSection(title, section = {}) {
+function renderAnalysisSection(title, section = {}, labels = getAnalysisLabels()) {
   return `
     <section class="analysis-result-section">
       <div class="analysis-section-heading">
         <h3>${escapeHtml(title)}</h3>
-        ${renderScore(section.score, "Score")}
+        ${renderScore(section.score, labels.score)}
       </div>
       ${section.assessment ? `<p>${escapeHtml(section.assessment)}</p>` : ""}
-      ${renderList("Strengths", section.strengths)}
-      ${renderList("Weaknesses", section.weaknesses)}
-      ${renderList("Improvement points", section.improvement_points)}
+      ${renderList(labels.strengths, section.strengths)}
+      ${renderList(labels.weaknesses, section.weaknesses)}
+      ${renderList(labels.improvementPoints, section.improvement_points)}
     </section>
   `;
 }
@@ -347,6 +398,10 @@ function renderList(title, items) {
       </ul>
     </div>
   `;
+}
+
+function getAnalysisLabels() {
+  return analysisLabels[selectedLanguage] || analysisLabels.English;
 }
 
 function getGeminiText(data) {

@@ -125,6 +125,10 @@ body {
   resize: vertical;
 }
 
+.analysis-action-button {
+  margin-top: 14px;
+}
+
 .field-help,
 .structured-note {
   color: var(--color-text-secondary);
@@ -230,6 +234,11 @@ body {
   margin-bottom: 6px;
 }
 
+.analysis-print-button {
+  margin-top: 22px;
+  width: 100%;
+}
+
 .analysis-bullet {
   margin: 0 0 10px;
   padding-left: 20px;
@@ -245,6 +254,131 @@ body {
 .button:disabled {
   cursor: not-allowed;
   opacity: 0.65;
+}
+
+/* Analytics page */
+.analytics-page {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: 40px 24px 88px;
+}
+
+.analytics-header h1 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.08;
+  margin: 0 0 12px;
+}
+
+.analytics-header p,
+.analytics-status {
+  color: var(--color-text-secondary);
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.analytics-status {
+  color: #B91C1C;
+  margin-top: 18px;
+}
+
+.analytics-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 28px;
+}
+
+.analytics-card,
+.analytics-section,
+.analytics-list,
+.prompt-log-item {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.analytics-card {
+  padding: 20px;
+}
+
+.analytics-label {
+  color: var(--color-text-secondary);
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.analytics-card strong {
+  font-size: 2rem;
+}
+
+.analytics-section {
+  margin-top: 22px;
+  padding: 24px;
+}
+
+.analytics-section h2 {
+  margin-top: 0;
+}
+
+.analytics-breakdown {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.analytics-list {
+  padding: 18px;
+}
+
+.analytics-list h3 {
+  margin-top: 0;
+}
+
+.analytics-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.analytics-list li {
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.analytics-list li:first-child {
+  border-top: 0;
+}
+
+.prompt-log-list {
+  display: grid;
+  gap: 12px;
+}
+
+.prompt-log-item {
+  padding: 14px 16px;
+}
+
+.prompt-log-item summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.prompt-log-item pre {
+  background: var(--color-bg-page);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  margin: 14px 0 0;
+  max-height: 420px;
+  overflow: auto;
+  padding: 14px;
+  white-space: pre-wrap;
 }
 /* 2. Navigation */
 /* The nav is shared by every page, so these styles stay simple and flexible. */
@@ -814,6 +948,11 @@ nav {
   .analysis-page {
     grid-template-columns: 1fr;
   }
+
+  .analytics-grid,
+  .analytics-breakdown {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
@@ -887,6 +1026,15 @@ nav {
   .analysis-section-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .analytics-page {
+    padding: 32px 18px 72px;
+  }
+
+  .analytics-grid,
+  .analytics-breakdown {
+    grid-template-columns: 1fr;
   }
 }
 
