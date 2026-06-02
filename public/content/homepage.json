@@ -72,31 +72,6 @@
       ]
     },
     {
-      "id": "methodology",
-      "title": "Built on cognitive psychology",
-      "body": [
-        "CogniCheck uses cognitive psychology principles to reduce cognitive overload and improve dashboard understanding."
-      ],
-      "cards": [
-        {
-          "title": "Attention",
-          "body": "Make the most important information stand out so users know where to look first."
-        },
-        {
-          "title": "Structure",
-          "body": "Group related metrics clearly so users can understand the dashboard faster."
-        },
-        {
-          "title": "Working memory",
-          "body": "Reduce mental effort by showing answers directly instead of forcing users to calculate them."
-        },
-        {
-          "title": "Change visibility",
-          "body": "Make comparisons, deviations and trends visible so action becomes easier."
-        }
-      ]
-    },
-    {
       "id": "demo-access",
       "title": "Try CogniCheck in a demo",
       "body": [
