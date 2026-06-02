@@ -61,6 +61,7 @@ let openFile = handleImageUpload;
 
 // Lightweight check before the expensive full analysis.
 // It asks Gemini whether the image looks like a report/dashboard.
+// TODO: To reduce cost and latency, fold this report-like check into the import step later.
 async function checkIsReport(base64) {
   const base64Data = base64.split(",")[1];
   const mimeType = base64.split(";")[0].split(":")[1];

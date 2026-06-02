@@ -17,7 +17,7 @@
 <main class="analytics-page">
     <section class="analytics-header">
         <h1>CogniCheck Analytics</h1>
-        <p>PostgreSQL-backed stats for page views, analysis activity and generated prompts.</p>
+        <p>PostgreSQL-backed stats for page views, analysis activity and LLM outputs.</p>
     </section>
 
     <p id="database-status" class="analytics-status"></p>
@@ -36,8 +36,8 @@
             <strong id="analysis-success-total">-</strong>
         </article>
         <article class="analytics-card">
-            <span class="analytics-label">Stored prompts</span>
-            <strong id="prompt-total">-</strong>
+            <span class="analytics-label">Stored outputs</span>
+            <strong id="output-total">-</strong>
         </article>
     </section>
 
@@ -47,8 +47,8 @@
     </section>
 
     <section class="analytics-section">
-        <h2>Latest Prompt Logs</h2>
-        <div id="prompt-log-list" class="prompt-log-list"></div>
+        <h2>Latest LLM Outputs</h2>
+        <div id="output-log-list" class="prompt-log-list"></div>
     </section>
 </main>
 

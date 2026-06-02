@@ -8,12 +8,24 @@ const path = require("path");
 const analyticsRoutes = require("./src/routes/analytics");
 const analyzeImageRoutes = require("./src/routes/analyze-image");
 const analyzeRequirementsRoutes = require("./src/routes/analyze-requirements");
+const contactRoutes = require("./src/routes/contact");
 const { trackPageView } = require("./src/services/analytics-db");
 
 const app = express();
 const port = process.env.PORT || 3000;
 const sessionCookieName = "cognicheck_demo_session";
 const sessionCookieValue = "authenticated";
+const trackedPages = new Set([
+  "/",
+  "/index.html",
+  "/methodology.html",
+  "/methodology-requirements.html",
+  "/methodology-analysis.html",
+  "/demo.html",
+  "/Analysis.html",
+  "/requirements-page.html",
+  "/analytics.html"
+]);
 
 function parseCookies(cookieHeader = "") {
   return Object.fromEntries(
@@ -60,6 +72,9 @@ function requireLogin(req, res, next) {
     "/login",
     "/logout",
     "/session",
+    "/methodology.html",
+    "/methodology-requirements.html",
+    "/methodology-analysis.html",
     "/content/homepage.json",
     "/css/style.css",
     "/js/homepage.js",
@@ -88,6 +103,9 @@ function requireLogin(req, res, next) {
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
+// The contact form is public because visitors need to request demos before logging in.
+app.use(contactRoutes);
+
 app.post("/login", (req, res) => {
   const appPassword = process.env.APP_PASSWORD;
   const submittedPassword = req.body.password || "";
@@ -100,7 +118,7 @@ app.post("/login", (req, res) => {
       maxAge: 1000 * 60 * 60 * 8
     });
 
-    return res.redirect("/Analysis.html");
+    return res.redirect("/demo.html");
   }
 
   return res.redirect("/?login=failed");
@@ -118,8 +136,6 @@ app.get("/session", (req, res) => {
 app.use(requireLogin);
 
 app.use((req, res, next) => {
-  const trackedPages = new Set(["/", "/index.html", "/Analysis.html", "/requirements-page.html", "/analytics.html"]);
-
   if (req.method === "GET" && trackedPages.has(req.path)) {
     trackPageView(req);
   }

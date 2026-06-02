@@ -2,173 +2,154 @@
 
 Use this format for the final CogniCheck report analysis.
 
-The analysis should be clear, structured and practical.
+The final response must be concise, machine-readable and easy for the frontend to render.
 
-## Required output sections
+## Required output type
 
-### 1. Executive summary
+ALWAYS output one valid JSON object.
 
-Give a short summary of the report quality.
+Do not output Markdown.
+Do not output text before or after the JSON.
+Do not wrap the JSON in code fences.
+Scores must be numbers from 1 to 10, not strings.
+Use null only when a value is genuinely unknown.
 
-Include:
+## Product direction
 
-- overall cognitive effectiveness
-- overall decision alignment
-- most important strength
-- most important risk
+CogniCheck should feel like a concise expert review tool, not a long generated report.
 
-Keep this section concise.
+Focus on:
 
-### 2. Cognitive load score
+- cognitive load
+- decision alignment
+- the most relevant psychological explanation
+- the highest-leverage recommendations
 
-Give a score from 1 to 10.
+Remove or merge these old long sections:
 
-Format:
+- context alignment
+- cognitive psychology analysis
+- decision-support analysis
+- key risks
+- long recommendations
+- repeated missing context
 
-**Cognitive load score: X/10**
+These ideas may still inform the analysis internally, but they must not appear as separate output sections.
 
-Explain the score in practical terms.
+## Score meaning
 
-A higher score means higher cognitive load.
+- executive_verdict.total_score: 1 = very weak overall decision support, 10 = strong overall decision support.
+- cognitive_load.score: 1 = very low unnecessary cognitive load, 10 = very high unnecessary cognitive load.
+- decision_alignment.score: 1 = very poor decision alignment, 10 = strong decision alignment.
 
-Assess:
+Important:
 
-- visual complexity
-- attention competition
-- information density
-- mental reconstruction required
-- hierarchy clarity
-- grouping and structure
-- change visibility
+- A visually polished report can still score low on decision alignment if the user must manually infer the decision logic.
+- Distinguish between information relevance and decision readiness. A report can contain relevant information but still fail to actively support a decision.
+- A 5 or 6 is not a bad score. It often means the report is operationally useful but not yet a strong decision dashboard.
 
-### 3. Decision alignment score
+## Exact JSON structure
 
-Give a score from 1 to 10.
+Use this exact JSON structure:
 
-Format:
+{
+  "executive_verdict": {
+    "total_score": 1,
+    "maturity_level": "",
+    "verdict": "",
+    "most_important_issue": "",
+    "most_important_improvement": ""
+  },
+  "cognitive_load": {
+    "score": 1,
+    "assessment": "",
+    "key_points": []
+  },
+  "decision_alignment": {
+    "score": 1,
+    "assessment": "",
+    "key_points": []
+  },
+  "psychological_lens": {
+    "assessment": "",
+    "key_points": []
+  },
+  "top_recommendations": [
+    {
+      "recommendation": "",
+      "why_it_matters": ""
+    }
+  ],
+  "missing_context": {
+    "assessment": "",
+    "items": []
+  }
+}
 
-**Decision alignment score: X/10**
+## Section rules
 
-A higher score means better alignment with the intended decision.
+executive_verdict:
 
-Answer explicitly:
+- The verdict must be 3 to 5 sentences maximum.
+- Say whether the report is useful, cognitively clear and decision-aligned.
+- Mention the most important issue.
+- Mention the most important improvement.
+- The maturity_level must be one of the four maturity levels defined in the main prompt.
 
-> Does this report help the intended user make the intended decision?
+cognitive_load:
 
-Assess:
+- Include score 1-10.
+- Use one short assessment paragraph.
+- key_points must contain at most 3 bullets.
+- Cover only the most important points: what increases load, what reduces load and what to improve first.
 
-- audience fit
-- decision fit
-- KPI relevance
-- context sufficiency
-- actionability
-- usage context fit
+decision_alignment:
 
-### 4. Context alignment
+- Include score 1-10.
+- Directly answer: "Does this report help the intended user make the intended decision?"
+- Use one short assessment paragraph.
+- key_points must contain at most 3 bullets.
 
-Explain how well the report matches the validated context.
+psychological_lens:
 
-Cover:
+- Use cognitive psychology as an explanatory lens, not as academic decoration.
+- Choose only the most relevant concepts for this report.
+- Choose from: attention, Gestalt grouping, working memory, cognitive load, change visibility, mental reconstruction.
+- Do not discuss every concept every time.
+- key_points must contain at most 4 bullets.
+- Each bullet must connect theory to a concrete dashboard issue.
 
-- intended audience
-- primary purpose
-- main decision supported
-- reporting frequency
-- usage context
+top_recommendations:
 
-If context is missing, say so.
+- Include at most 3 recommendations.
+- Each recommendation must be directly actionable.
+- Each recommendation must say what to change and why it matters.
+- Avoid vague advice such as "make it clearer", "improve layout" or "add context" unless you specify exactly how.
 
-### 5. Cognitive psychology analysis
+missing_context:
 
-Analyze the report using these lenses:
+- items must contain at most 3 bullets.
+- Only mention context that would materially improve the analysis.
+- If no major missing context exists, set assessment to "No major missing context detected." and items to [].
 
-#### Attention
+## Style rules
 
-What stands out first? Does that match what matters most?
-
-#### Structure
-
-Are related elements grouped logically?
-
-#### Working memory
-
-Does the user need to remember and combine scattered information?
-
-#### Change visibility
-
-Are trends, differences and deviations explicit?
-
-#### Cognitive load
-
-What creates unnecessary effort?
-
-### 6. Decision-support analysis
-
-Explain whether the report helps the user move from data to action.
-
-Cover:
-
-- what decision the report appears to support
-- whether this matches the validated decision context
-- what is missing for decision-making
-- what could cause misinterpretation
-- what should be made more explicit
-
-### 7. Key risks
-
-List the most important risks.
-
-Possible risks:
-
-- cognitive overload
-- unclear KPI meaning
-- conflicting signals
-- missing thresholds
-- unclear actions
-- misleading visual emphasis
-- insufficient context
-- too much detail for the audience
-- too little detail for the decision
-
-### 8. Recommendations
-
-Give practical recommendations.
-
-Separate into:
-
-#### Quick wins
-
-Small changes that can be made quickly.
-
-#### Structural improvements
-
-Larger layout, modelling, KPI or report design improvements.
-
-#### Decision-support improvements
-
-Changes that better connect the report to the intended decision.
-
-### 9. Missing context
-
-State what information is missing and how it limits the analysis.
-
-Do not pretend certainty when important context is missing.
-
-## Writing rules
-
-- Be specific.
-- Be constructive.
-- Use professional BI consulting language.
-- Avoid generic advice.
-- Explain why each issue matters.
-- Link recommendations to cognition or decision support.
-- Do not overstate certainty.
-- Do not invent missing business context.
+- Be concise.
+- Avoid repetition.
+- Do not mention the same issue in every section.
+- If one issue affects multiple dimensions, mention it once as a cross-cutting issue.
+- Focus on the highest-leverage insights.
+- Prefer quality over completeness.
+- Write like a BI consultant giving a sharp review, not like an academic report.
+- Avoid long paragraphs.
+- Replace all placeholder/example text with actual analysis.
+- The analysis text inside values must be written in the selected output language.
+- Do not translate JSON keys.
 
 ## Language rule
 
-Write the full analysis in the selected output language.
+Write all JSON string values in the selected output language.
 
-Do not mix languages.
+Do not translate JSON keys.
 
 If the selected language is Dutch, use natural Dutch business language. Terms such as dashboard, KPI, Power BI, cognitive load and decision support may remain in English when that sounds natural.

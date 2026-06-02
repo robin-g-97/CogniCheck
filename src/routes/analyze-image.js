@@ -1,12 +1,12 @@
 const express = require("express");
-const { callGemini } = require("../services/gemini");
+const { callGemini, extractGeminiText } = require("../services/gemini");
 const {
   buildFinalAnalysisPrompt,
   buildImportPrompt
 } = require("../prompts/cognicheck-analysis");
 const {
   trackAnalysisEvent,
-  trackPrompt
+  trackLlmOutput
 } = require("../services/analytics-db");
 
 const router = express.Router();
@@ -65,9 +65,6 @@ router.post("/api/analyze-report", async (req, res) => {
             structuredContext
           });
 
-    // Store the generated text prompt for review, but never store image Base64 here.
-    await trackPrompt({ mode, selectedLanguage, prompt });
-
     const fileParts = (supportingFiles || []).map(file => ({
       inline_data: {
         mime_type: file.mimeType,
@@ -84,6 +81,12 @@ router.post("/api/analyze-report", async (req, res) => {
       ...(["import", "analysis"].includes(mode) && {
         generationConfig: { responseMimeType: "application/json" }
       })
+    });
+
+    await trackLlmOutput({
+      mode,
+      selectedLanguage,
+      output: extractGeminiText(data)
     });
 
     await trackAnalysisEvent({ mode, selectedLanguage, success: true });

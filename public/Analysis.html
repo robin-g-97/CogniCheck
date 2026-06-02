@@ -8,7 +8,6 @@
     -->
     <script src="/js/shared/api.js" defer></script>
     <script src="/js/analysis/image-upload.js" defer></script>
-    <script src="/js/analysis/render-analysis.js" defer></script>
     <script src="/js/analysis/analyze-page.js" defer></script>
     <script src="/js/shared/nav.js" defer></script>
 
@@ -40,7 +39,7 @@
 
         <div class="analysis-section">
             <label for="supportingFilesInput">Upload supporting files</label>
-            <p class="field-help">Optional: upload requirements, notes, KPI definitions or other context documents.</p>
+            <p class="field-help">Optional: upload requirements, notes, KPI definitions or other context documents. TXT files are read directly. PDF and DOCX support is experimental and sent to the AI as attachments. XLSX is not supported yet.</p>
             <input type="file" id="supportingFilesInput" accept=".txt,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple onchange="handleSupportingFileUpload(event)">
             <p id="supporting-file-summary" class="field-help"></p>
         </div>

@@ -24,8 +24,6 @@ async function openRequirements(event) {
     return;
   }
 
-  console.log(text);
-
   // Save the extracted text for analyzeRequirements().
   requirements = text;
 }

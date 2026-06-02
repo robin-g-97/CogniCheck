@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const promptPath = path.join(__dirname, "cognicheck-analysis-prompt.txt");
+const knowledgeDir = path.join(__dirname, "..", "..", "backend", "knowledge");
 
 const structuredContextKeys = [
   "reportTitle",
@@ -71,6 +72,7 @@ function buildFinalAnalysisPrompt({
   const template = fs.readFileSync(promptPath, "utf8");
 
   return fillPromptTemplate(template, {
+    knowledgeBase: loadKnowledgeBase(),
     selectedLanguage,
     backgroundContext: backgroundContext || "(none provided)",
     extractedDocumentText: extractedDocumentText?.trim() || "(no text extracted; PDF and DOCX files may be attached separately)",
@@ -78,7 +80,31 @@ function buildFinalAnalysisPrompt({
   });
 }
 
+function loadKnowledgeBase() {
+  try {
+    const fileNames = fs
+      .readdirSync(knowledgeDir)
+      .filter(fileName => fileName.endsWith(".md"))
+      .sort();
+
+    const sections = fileNames.map(fileName => {
+      const filePath = path.join(knowledgeDir, fileName);
+      const content = fs.readFileSync(filePath, "utf8").trim();
+      return `## Source: ${fileName}\n\n${content}`;
+    });
+
+    return sections.length
+      ? `# CogniCheck internal knowledge base\n\n${sections.join("\n\n")}`
+      : "";
+  } catch (error) {
+    // Keep local development forgiving: the app can still run without knowledge files.
+    console.warn("CogniCheck knowledge base could not be loaded:", error.message);
+    return "";
+  }
+}
+
 module.exports = {
   buildFinalAnalysisPrompt,
-  buildImportPrompt
+  buildImportPrompt,
+  loadKnowledgeBase
 };

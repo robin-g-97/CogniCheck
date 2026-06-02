@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const { Pool } = require("pg");
 
 const databaseUrl = process.env.DATABASE_URL;
-const promptLoggingEnabled = process.env.PROMPT_LOGGING_ENABLED !== "false";
+const outputLoggingEnabled = process.env.OUTPUT_LOGGING_ENABLED !== "false";
 const databaseConfigured = Boolean(databaseUrl) && !databaseUrl.includes("${{");
 
 const pool = databaseConfigured
@@ -59,17 +59,17 @@ async function ensureAnalyticsTables() {
         error text
       );
 
-      create table if not exists prompt_logs (
+      create table if not exists llm_outputs (
         id bigserial primary key,
         created_at timestamptz not null default now(),
         mode text not null,
         selected_language text,
-        prompt text not null
+        output text not null
       );
 
       create index if not exists page_views_created_at_idx on page_views (created_at desc);
       create index if not exists analysis_events_created_at_idx on analysis_events (created_at desc);
-      create index if not exists prompt_logs_created_at_idx on prompt_logs (created_at desc);
+      create index if not exists llm_outputs_created_at_idx on llm_outputs (created_at desc);
     `)
       .then(() => {
         initialized = true;
@@ -119,13 +119,13 @@ async function trackAnalysisEvent({ mode, selectedLanguage, success, error }) {
   );
 }
 
-async function trackPrompt({ mode, selectedLanguage, prompt }) {
-  if (!pool || !promptLoggingEnabled) return;
+async function trackLlmOutput({ mode, selectedLanguage, output }) {
+  if (!pool || !outputLoggingEnabled || !output) return;
 
   await safeQuery(
-    `insert into prompt_logs (mode, selected_language, prompt)
+    `insert into llm_outputs (mode, selected_language, output)
      values ($1, $2, $3)`,
-    [mode, selectedLanguage || "", prompt]
+    [mode, selectedLanguage || "", output]
   );
 }
 
@@ -135,7 +135,7 @@ async function getAnalyticsSummary() {
       configured: false,
       pageViews: { total: 0, byPath: {}, uniqueViewerEstimate: 0 },
       analyses: { totalEvents: 0, successful: 0, failed: 0, byMode: {}, byLanguage: {} },
-      prompts: { stored: 0, latest: [] }
+      outputs: { stored: 0, latest: [] }
     };
   }
 
@@ -146,8 +146,8 @@ async function getAnalyticsSummary() {
     analysisTotals,
     analysisByMode,
     analysisByLanguage,
-    promptTotal,
-    latestPrompts
+    outputTotal,
+    latestOutputs
   ] = await Promise.all([
     safeQuery("select count(*)::int as count from page_views"),
     safeQuery("select path, count(*)::int as count from page_views group by path order by count desc"),
@@ -161,8 +161,8 @@ async function getAnalyticsSummary() {
     `),
     safeQuery("select mode, count(*)::int as count from analysis_events group by mode order by count desc"),
     safeQuery("select selected_language, count(*)::int as count from analysis_events group by selected_language order by count desc"),
-    safeQuery("select count(*)::int as count from prompt_logs"),
-    safeQuery("select id, created_at, mode, selected_language from prompt_logs order by created_at desc limit 10")
+    safeQuery("select count(*)::int as count from llm_outputs"),
+    safeQuery("select id, created_at, mode, selected_language from llm_outputs order by created_at desc limit 10")
   ]);
 
   const totals = analysisTotals.rows[0] || {};
@@ -181,9 +181,9 @@ async function getAnalyticsSummary() {
       byMode: rowsToCountMap(analysisByMode.rows, "mode"),
       byLanguage: rowsToCountMap(analysisByLanguage.rows, "selected_language")
     },
-    prompts: {
-      stored: promptTotal.rows[0]?.count || 0,
-      latest: latestPrompts.rows.map(row => ({
+    outputs: {
+      stored: outputTotal.rows[0]?.count || 0,
+      latest: latestOutputs.rows.map(row => ({
         id: row.id,
         timestamp: row.created_at,
         mode: row.mode,
@@ -193,14 +193,14 @@ async function getAnalyticsSummary() {
   };
 }
 
-async function getStoredPrompts(limit = 20) {
+async function getStoredOutputs(limit = 20) {
   if (!pool) {
     return [];
   }
 
   const result = await safeQuery(
-    `select id, created_at, mode, selected_language, prompt
-     from prompt_logs
+    `select id, created_at, mode, selected_language, output
+     from llm_outputs
      order by created_at desc
      limit $1`,
     [limit]
@@ -211,7 +211,7 @@ async function getStoredPrompts(limit = 20) {
     timestamp: row.created_at,
     mode: row.mode,
     selectedLanguage: row.selected_language,
-    prompt: row.prompt
+    output: row.output
   }));
 }
 
@@ -224,8 +224,8 @@ function rowsToCountMap(rows, key) {
 
 module.exports = {
   getAnalyticsSummary,
-  getStoredPrompts,
+  getStoredOutputs,
   trackAnalysisEvent,
+  trackLlmOutput,
   trackPageView,
-  trackPrompt
 };

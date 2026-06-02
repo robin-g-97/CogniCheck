@@ -2,38 +2,49 @@
 // Each HTML page contains <div id="nav"></div>; this script fills that div.
 const nav = document.getElementById("nav");
 
-// This guard prevents errors on pages that do not have a nav element.
-if (nav) {
+const protectedDemoPaths = new Set([
+  "/demo.html",
+  "/Analysis.html",
+  "/requirements-page.html",
+  "/analytics.html"
+]);
+
+function renderPublicNavigation() {
   nav.innerHTML = `
     <nav class="site-nav">
       <a class="nav-brand" href="/">CogniCheck</a>
       <div class="nav-links">
         <a href="/#features">Features</a>
-        <a href="/#methodology">Methodology</a>
+        <a href="/methodology.html">Methodology</a>
         <a href="/#workshops">Workshops</a>
         <a href="/#about">About</a>
         <a href="/#contact">Contact</a>
-        <a class="nav-demo-button" href="/#contact">Request demo</a>
+        <a class="nav-demo-button" href="/demo.html">Request demo</a>
       </div>
     </nav>
   `;
+}
 
-  fetch("/session")
-    .then(response => response.json())
-    .then(session => {
-      if (!session.authenticated) return;
+function renderProtectedNavigation() {
+  nav.innerHTML = `
+    <nav class="site-nav">
+      <a class="nav-brand" href="/demo.html">CogniCheck</a>
+      <div class="nav-links">
+        <a href="/demo.html">Demo Home</a>
+        <a href="/Analysis.html">Report Analysis</a>
+        <a href="/requirements-page.html">Requirements to Blueprint</a>
+        <a href="/methodology.html">Methodology</a>
+        <a href="/logout">Logout</a>
+      </div>
+    </nav>
+  `;
+}
 
-      nav.insertAdjacentHTML("beforeend", `
-        <nav class="demo-nav" aria-label="Demo pages">
-          <span>Demo pages</span>
-          <a href="/requirements-page.html">Blueprint demo</a>
-          <a href="/Analysis.html">Analysis demo</a>
-          <a href="/analytics.html">Analytics</a>
-          <a href="/logout">Log out</a>
-        </nav>
-      `);
-    })
-    .catch(() => {
-      // If the session check fails, keep the normal public navigation.
-    });
+// Methodology pages stay public. Tool pages use the focused demo navigation.
+if (nav) {
+  if (protectedDemoPaths.has(window.location.pathname)) {
+    renderProtectedNavigation();
+  } else {
+    renderPublicNavigation();
+  }
 }

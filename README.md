@@ -7,6 +7,9 @@ CogniCheck Server is a Node.js and Express application for running AI-assisted a
 - Password-protected demo access with an optional `APP_PASSWORD`
 - Screenshot/image upload analysis via Gemini
 - Requirements document analysis for generating blueprint-style output
+- Two-step CogniCheck report analysis: import structured context, then run the final analysis
+- Server-side CogniCheck methodology and scoring rubrics loaded from `backend/knowledge/`
+- Concise JSON final analysis output for cognitive load, decision alignment, psychological lens, recommendations, and missing context
 - Static browser pages served from `public/`
 - Shared Gemini service wrapper in `src/services/gemini.js`
 
@@ -14,8 +17,12 @@ CogniCheck Server is a Node.js and Express application for running AI-assisted a
 
 ```text
 .
++-- backend/
+|   +-- knowledge/         CogniCheck methodology, rubrics, and final output format
 +-- public/                 Static HTML, CSS, JavaScript, and images
 |   +-- Analysis.html        Screenshot analysis page
+|   +-- demo.html            Protected demo landing page
+|   +-- methodology.html     Public methodology overview
 |   +-- requirements-page.html
 |   +-- css/
 |   +-- js/
@@ -51,13 +58,18 @@ GEMINI_MODEL=gemini-2.5-flash-lite
 APP_PASSWORD=optional_demo_password
 REQUIREMENTS_BLUEPRINT_PROMPT=requirements_analysis_prompt_with_optional_{{requirements}}_placeholder
 DATABASE_URL=${{Postgres.DATABASE_URL}}
-PROMPT_LOGGING_ENABLED=true
+OUTPUT_LOGGING_ENABLED=true
+RESEND_API_KEY=your_resend_api_key
+CONTACT_TO_EMAIL=robin@cognicheck.tech
+CONTACT_FROM_EMAIL=onboarding@resend.dev
 PORT=3000
 ```
 
-`GEMINI_API_KEY` and `REQUIREMENTS_BLUEPRINT_PROMPT` are required for AI analysis. `APP_PASSWORD` is optional; when it is not set, the app runs without login protection. The CogniCheck report analysis prompt lives server-side in `src/prompts/`, so it does not need to be configured in Railway. If `REQUIREMENTS_BLUEPRINT_PROMPT` includes `{{requirements}}`, the uploaded requirements text is inserted there. Otherwise, the text is appended to the prompt automatically.
+`GEMINI_API_KEY` and `REQUIREMENTS_BLUEPRINT_PROMPT` are required for AI analysis. `APP_PASSWORD` is optional; when it is not set, the app runs without login protection. The CogniCheck report analysis prompt lives server-side in `src/prompts/`, so it does not need to be configured in Railway. The prompt builder also loads Markdown files from `backend/knowledge/` and injects them into the final CogniCheck prompt on the server only. If `REQUIREMENTS_BLUEPRINT_PROMPT` includes `{{requirements}}`, the uploaded requirements text is inserted there. Otherwise, the text is appended to the prompt automatically.
 
-`DATABASE_URL` enables PostgreSQL-backed analytics. In Railway, set it to `${{Postgres.DATABASE_URL}}` after adding a PostgreSQL service. `PROMPT_LOGGING_ENABLED=false` disables storing generated prompts.
+`DATABASE_URL` enables PostgreSQL-backed analytics. In Railway, set it to `${{Postgres.DATABASE_URL}}` after adding a PostgreSQL service. `OUTPUT_LOGGING_ENABLED=false` disables storing generated LLM outputs.
+
+`RESEND_API_KEY` enables the homepage contact form to send email directly from the backend. Replace `your_resend_api_key` with your real Resend API key. By default, messages are sent to `robin@cognicheck.tech` from Resend's test sender, `onboarding@resend.dev`. For the most professional setup, verify `cognicheck.tech` in Resend and then set `CONTACT_FROM_EMAIL` to an address on that domain, such as `CogniCheck <contact@cognicheck.tech>`.
 
 ## Running Locally
 
@@ -82,9 +94,37 @@ http://localhost:3000
 ## Main Pages
 
 - `/` - homepage
-- `/Analysis.html` - screenshot analysis workflow
-- `/requirements-page.html` - requirements-to-blueprint workflow
-- `/analytics.html` - protected analytics dashboard for views, analysis counts, and prompt logs
+- `/methodology.html` - public CogniCheck methodology overview
+- `/methodology-requirements.html` - public Requirements to Blueprint methodology
+- `/methodology-analysis.html` - public Report Analysis methodology
+- `/demo.html` - protected demo landing page after login
+- `/Analysis.html` - protected screenshot analysis workflow
+- `/requirements-page.html` - protected requirements-to-blueprint workflow
+- `/analytics.html` - protected analytics dashboard for views, analysis counts, and LLM output logs
+
+When `APP_PASSWORD` is configured, successful login redirects to `/demo.html`. Public visitors can read the methodology pages without logging in, while `/demo.html`, `/Analysis.html`, `/requirements-page.html`, and `/analytics.html` remain protected.
+
+## CogniCheck Analysis Flow
+
+The report-analysis page uses two Gemini steps:
+
+1. Import structured context from the uploaded screenshot, optional background text, and optional supporting files.
+2. Perform the final CogniCheck analysis using the reviewed structured context and the server-side knowledge base.
+
+The final analysis is intentionally short. It returns one JSON object with:
+
+- executive verdict with total score and maturity level
+- cognitive load score
+- decision alignment score
+- psychological lens
+- top recommendations
+- missing context
+
+The older `public/js/analysis/render-analysis.js` renderer was removed because it supported a previous long JSON format. The current analysis page renders the concise JSON structure in `public/js/analysis/analyze-page.js`.
+
+TXT supporting files are read in the browser. PDF and DOCX files are sent to Gemini as experimental attachments. XLSX is not supported yet.
+
+AI responses can occasionally contain invalid JSON, especially malformed escaped characters. The frontend now handles these parsing errors gracefully by showing a retry message and logging only a short raw-response preview in the browser console for debugging.
 
 ## API Routes
 
@@ -92,7 +132,8 @@ http://localhost:3000
 - `POST /api/analyze-report` - imports report context or performs full CogniCheck analysis with server-side prompts
 - `POST /api/analyze-requirements` - analyzes requirements text and returns generated blueprint content
 - `GET /api/analytics/summary` - returns protected PostgreSQL-backed viewer and analysis counts
-- `GET /api/analytics/prompts?limit=20` - returns protected generated prompt logs
+- `GET /api/analytics/outputs?limit=20` - returns protected generated LLM output logs
+- `POST /api/contact` - sends homepage contact form submissions to the configured contact email
 - `POST /login` - starts a password-protected session when `APP_PASSWORD` is set
 - `GET /logout` - clears the session
 - `GET /session` - returns the current authentication state
@@ -102,3 +143,4 @@ http://localhost:3000
 - `.env` and `node_modules/` are intentionally ignored by Git.
 - The app uses CommonJS modules.
 - The frontend currently relies on browser scripts in `public/js/`.
+- CogniCheck methodology files stay in `backend/knowledge/` and are not sent to the frontend directly.

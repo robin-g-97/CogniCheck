@@ -156,13 +156,17 @@
         "I am currently looking for feedback, pilot users, workshop opportunities and conversations with BI professionals who want to build better decision support."
       ],
       "contactForm": {
-        "recipient": "robin.g.1997@gmail.com",
-        "subject": "CogniCheck contact",
         "nameLabel": "Name",
         "emailLabel": "Email",
         "messageLabel": "Message",
         "messagePlaceholder": "Share a few words about your demo, pilot or workshop idea.",
-        "buttonLabel": "Submit"
+        "buttonLabel": "Send message",
+        "sendingLabel": "Sending...",
+        "successMessage": "Thanks, your message has been sent.",
+        "errorMessage": "The message could not be sent. Please try again later.",
+        "directEmailLabel": "Prefer email?",
+        "directEmailText": "Mail me directly at",
+        "directEmail": "robin@cognicheck.tech"
       }
     }
   ]

@@ -139,6 +139,8 @@ function createField(id, labelText, type = "text") {
 
 function createContactForm(contactContent) {
   const form = createElement("form", { className: "contact-form" });
+  form.action = "/api/contact";
+  form.method = "post";
 
   const nameField = createField("contact-name", contactContent.nameLabel);
   const emailField = createField("contact-email", contactContent.emailLabel, "email");
@@ -162,26 +164,63 @@ function createContactForm(contactContent) {
   });
   button.type = "submit";
 
-  form.append(nameField.group, emailField.group, messageGroup, button);
+  const status = createElement("p", { className: "contact-form-status" });
 
-  form.addEventListener("submit", event => {
+  form.append(nameField.group, emailField.group, messageGroup, button, status);
+
+  form.addEventListener("submit", async event => {
     event.preventDefault();
+    status.textContent = "";
+    status.className = "contact-form-status";
+    button.disabled = true;
+    button.textContent = contactContent.sendingLabel || "Sending...";
 
-    const body = [
-      `Name: ${nameField.input.value}`,
-      `Email: ${emailField.input.value}`,
-      "",
-      messageInput.value
-    ].join("\n");
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nameField.input.value,
+          email: emailField.input.value,
+          message: messageInput.value
+        })
+      });
 
-    const mailtoUrl = new URL(`mailto:${contactContent.recipient}`);
-    mailtoUrl.searchParams.set("subject", contactContent.subject);
-    mailtoUrl.searchParams.set("body", body);
+      if (!response.ok) {
+        const details = await response.json().catch(() => ({}));
+        throw new Error(details.error || "Contact request failed.");
+      }
 
-    window.location.href = mailtoUrl.toString();
+      form.reset();
+      status.textContent = contactContent.successMessage || "Thanks, your message has been sent.";
+      status.classList.add("contact-form-status-success");
+    } catch (error) {
+      console.error("Contact form failed:", error);
+      status.textContent = contactContent.errorMessage || "The message could not be sent. Please try again later.";
+      status.classList.add("contact-form-status-error");
+    } finally {
+      button.disabled = false;
+      button.textContent = contactContent.buttonLabel;
+    }
   });
 
   return form;
+}
+
+function createDirectEmailLink(contactContent) {
+  if (!contactContent.directEmail) return null;
+
+  const wrapper = createElement("p", { className: "direct-email" });
+  const label = contactContent.directEmailLabel ? `${contactContent.directEmailLabel} ` : "";
+  const text = contactContent.directEmailText || "Mail me directly at";
+  const link = createElement("a", { text: contactContent.directEmail });
+  const mailtoUrl = new URL(`mailto:${contactContent.directEmail}`);
+
+  mailtoUrl.searchParams.set("subject", "CogniCheck contact");
+  link.href = mailtoUrl.toString();
+  wrapper.append(label, `${text} `, link, ".");
+
+  return wrapper;
 }
 
 function appendSectionText(parent, sectionContent, headingTag) {
@@ -243,6 +282,8 @@ function createSection(sectionContent, extraClass = "") {
 
   if (sectionContent.contactForm) {
     content.appendChild(createContactForm(sectionContent.contactForm));
+    const directEmailLink = createDirectEmailLink(sectionContent.contactForm);
+    if (directEmailLink) content.appendChild(directEmailLink);
   }
 
   if (sectionContent.login) {

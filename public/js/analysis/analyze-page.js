@@ -64,48 +64,64 @@ const analysisLabels = {
     totalScore: "Total score",
     score: "Score",
     maturityLevel: "Maturity level",
+    mostImportantIssue: "Most important issue",
     mostImportantImprovement: "Most important improvement",
     printReport: "Print Report",
-    executiveSummary: "1. Executive summary",
+    executiveVerdict: "1. Executive verdict",
     sections: {
-      cognitiveLoad: "2. Cognitive load score",
-      decisionAlignment: "3. Decision alignment score",
-      contextAlignment: "4. Context alignment",
-      cognitivePsychology: "5. Cognitive psychology analysis",
-      decisionSupport: "6. Decision-support analysis",
-      keyRisks: "7. Key risks",
-      recommendations: "8. Recommendations",
-      missingContext: "9. Missing context"
+      cognitiveLoad: "2. Cognitive load",
+      decisionAlignment: "3. Decision alignment",
+      psychologicalLens: "4. Psychological lens",
+      topRecommendations: "5. Top recommendations",
+      missingContext: "6. Missing context"
     },
-    strengths: "Strengths",
-    weaknesses: "Weaknesses",
-    improvementPoints: "Improvement points"
+    keyPoints: "Key points",
+    whyItMatters: "Why it matters",
+    noMajorMissingContext: "No major missing context detected.",
+    notScored: "Not scored",
+    statusLabels: {
+      strong: "Strong",
+      needsRefinement: "Needs refinement",
+      needsAttention: "Needs attention",
+      lowConcern: "Low concern",
+      moderateConcern: "Moderate concern",
+      highConcern: "High concern"
+    }
   },
   Dutch: {
     resultTitle: "CogniCheck analyseresultaat",
     totalScore: "Totaalscore",
     score: "Score",
     maturityLevel: "Volwassenheidsniveau",
+    mostImportantIssue: "Belangrijkste issue",
     mostImportantImprovement: "Belangrijkste verbetering",
     printReport: "Print rapport",
-    executiveSummary: "1. Managementsamenvatting",
+    executiveVerdict: "1. Eindoordeel",
     sections: {
-      cognitiveLoad: "2. Score cognitieve belasting",
-      decisionAlignment: "3. Score beslissingsondersteuning",
-      contextAlignment: "4. Contextafstemming",
-      cognitivePsychology: "5. Cognitief-psychologische analyse",
-      decisionSupport: "6. Analyse beslissingsondersteuning",
-      keyRisks: "7. Belangrijkste risico's",
-      recommendations: "8. Aanbevelingen",
-      missingContext: "9. Ontbrekende context"
+      cognitiveLoad: "2. Cognitieve belasting",
+      decisionAlignment: "3. Beslissingsondersteuning",
+      psychologicalLens: "4. Psychologische lens",
+      topRecommendations: "5. Topaanbevelingen",
+      missingContext: "6. Ontbrekende context"
     },
-    strengths: "Sterke punten",
-    weaknesses: "Zwakke punten",
-    improvementPoints: "Verbeterpunten"
+    keyPoints: "Kernpunten",
+    whyItMatters: "Waarom dit belangrijk is",
+    noMajorMissingContext: "Geen belangrijke ontbrekende context gevonden.",
+    notScored: "Geen score",
+    statusLabels: {
+      strong: "Sterk",
+      needsRefinement: "Aanscherping nodig",
+      needsAttention: "Aandacht nodig",
+      lowConcern: "Laag aandachtspunt",
+      moderateConcern: "Matig aandachtspunt",
+      highConcern: "Hoog aandachtspunt"
+    }
   }
 };
 
-// Reads supporting files. Text files are extracted in the browser; PDF and DOCX are attached to Gemini.
+const concernScoreSections = new Set(["cognitive_load"]);
+
+// Reads supporting files. TXT is extracted in the browser; PDF and DOCX are experimental Gemini attachments.
 // TODO: Add local PDF text extraction when a PDF parser dependency is introduced.
 // TODO: Add local DOCX text extraction when a DOCX parser dependency is introduced.
 // TODO: Add XLSX support later if KPI spreadsheets become common input.
@@ -187,7 +203,7 @@ async function importReport() {
     });
 
     const rawOutput = getGeminiText(data);
-    structuredContext = normalizeStructuredContext(parseJsonResponse(rawOutput));
+    structuredContext = normalizeStructuredContext(safeParseJsonResponse(rawOutput));
     reportImported = true;
 
     lockBackgroundContext();
@@ -196,7 +212,7 @@ async function importReport() {
   } catch (error) {
     console.error("Import failed:", error);
     importError = error.message;
-    document.getElementById("import-error").innerText = `Import failed: ${error.message}`;
+    document.getElementById("import-error").innerText = getImportErrorMessage(error);
   } finally {
     loadingImport = false;
     setImportLoadingState();
@@ -234,13 +250,14 @@ async function performCogniCheckAnalysis() {
       structuredContext
     });
 
-    analysisResult = parseJsonResponse(getGeminiText(data));
+    analysisResult = safeParseJsonResponse(getGeminiText(data));
     renderAnalysisResult(analysisResult);
   } catch (error) {
     console.error("Analysis failed:", error);
     analysisError = error.message;
-    document.getElementById("analysis-error").innerText = `Analysis failed: ${error.message}`;
-    setAnalysisInstruction(`Analysis failed: ${error.message}`);
+    const userMessage = getAnalysisErrorMessage(error);
+    document.getElementById("analysis-error").innerText = userMessage;
+    setAnalysisInstruction(userMessage);
   } finally {
     loadingAnalysis = false;
     setAnalysisLoadingState();
@@ -266,6 +283,7 @@ function renderStructuredContextFields() {
   container.style.display = "block";
 }
 
+// Renders the short JSON-only final analysis format.
 function renderAnalysisResult(result) {
   const report = document.getElementById("analysis-report");
   const labels = getAnalysisLabels();
@@ -277,15 +295,12 @@ function renderAnalysisResult(result) {
   report.innerHTML = `
     <h2>${escapeHtml(labels.resultTitle)}</h2>
     <div class="analysis-result-text">
-      ${renderExecutiveSummary(result.executive_summary, labels)}
-      ${renderAnalysisSection(labels.sections.cognitiveLoad, result.cognitive_load, labels)}
-      ${renderAnalysisSection(labels.sections.decisionAlignment, result.decision_alignment, labels)}
-      ${renderAnalysisSection(labels.sections.contextAlignment, result.context_alignment, labels)}
-      ${renderAnalysisSection(labels.sections.cognitivePsychology, result.cognitive_psychology_analysis, labels)}
-      ${renderAnalysisSection(labels.sections.decisionSupport, result.decision_support_analysis, labels)}
-      ${renderAnalysisSection(labels.sections.keyRisks, result.key_risks, labels)}
-      ${renderAnalysisSection(labels.sections.recommendations, result.recommendations, labels)}
-      ${renderAnalysisSection(labels.sections.missingContext, result.missing_context, labels)}
+      ${renderExecutiveVerdict(result.executive_verdict, labels)}
+      ${renderScoredSection(labels.sections.cognitiveLoad, result.cognitive_load, labels, "cognitive_load")}
+      ${renderScoredSection(labels.sections.decisionAlignment, result.decision_alignment, labels, "decision_alignment")}
+      ${renderInsightSection(labels.sections.psychologicalLens, result.psychological_lens, labels)}
+      ${renderRecommendations(result.top_recommendations, labels)}
+      ${renderMissingContext(result.missing_context, labels)}
     </div>
   `;
 }
@@ -333,61 +348,136 @@ function normalizeStructuredContext(value) {
   return normalized;
 }
 
-function parseJsonResponse(text) {
+function safeParseJsonResponse(text) {
   const cleanText = text
     .replace(/```json/gi, "")
     .replace(/```/g, "")
     .trim();
 
-  if (!cleanText.startsWith("{")) {
-    const jsonStart = cleanText.indexOf("{");
-    const jsonEnd = cleanText.lastIndexOf("}");
+  const jsonStart = cleanText.indexOf("{");
+  const jsonEnd = cleanText.lastIndexOf("}");
+  const jsonText = jsonStart >= 0 && jsonEnd > jsonStart
+    ? cleanText.slice(jsonStart, jsonEnd + 1)
+    : cleanText;
 
-    if (jsonStart >= 0 && jsonEnd > jsonStart) {
-      return JSON.parse(cleanText.slice(jsonStart, jsonEnd + 1));
-    }
+  try {
+    return JSON.parse(jsonText);
+  } catch (error) {
+    // AI output can occasionally contain invalid escaping even when JSON is requested.
+    // Keep the UI friendly, but leave a small console preview for debugging.
+    console.warn("AI JSON parse failed:", error.message, jsonText.slice(0, 500));
+
+    const parseError = new Error(getJsonParseMessage(error));
+    parseError.isJsonParseError = true;
+    parseError.originalError = error;
+    throw parseError;
   }
-
-  return JSON.parse(cleanText);
 }
 
-function renderExecutiveSummary(summary = {}, labels = getAnalysisLabels()) {
+function getJsonParseMessage(error) {
+  if (error.message.includes("Bad escaped character in JSON at position")) {
+    return "The AI returned an invalid JSON response. This sometimes happens because of escaped characters. Please try again.";
+  }
+
+  return "The AI response could not be read as structured JSON. Please try again.";
+}
+
+// TODO: If JSON parsing errors remain common, consider adding a server-side JSON repair step or using stricter schema-based output.
+function getImportErrorMessage(error) {
+  if (error.isJsonParseError) return error.message;
+  if (error.message.includes("does not appear to be a report")) return error.message;
+  return "Import failed. Please check the uploaded file and try again.";
+}
+
+function getAnalysisErrorMessage(error) {
+  if (error.isJsonParseError) return error.message;
+  return "Analysis failed. Please try again. If this keeps happening, simplify the context or use another screenshot.";
+}
+
+function renderExecutiveVerdict(verdict = {}, labels = getAnalysisLabels()) {
   return `
     <section class="analysis-result-section analysis-summary">
       <div class="analysis-section-heading">
-        <h3>${escapeHtml(labels.executiveSummary)}</h3>
-        ${renderScore(summary.total_score, labels.totalScore)}
+        <h3>${escapeHtml(labels.executiveVerdict)}</h3>
+        ${renderScore(verdict.total_score, labels, "executive_verdict")}
       </div>
-      ${summary.maturity_level ? `<p><strong>${escapeHtml(labels.maturityLevel)}:</strong> ${escapeHtml(summary.maturity_level)}</p>` : ""}
-      ${summary.summary ? `<p>${escapeHtml(summary.summary)}</p>` : ""}
-      ${summary.most_important_improvement ? `<p><strong>${escapeHtml(labels.mostImportantImprovement)}:</strong> ${escapeHtml(summary.most_important_improvement)}</p>` : ""}
+      ${verdict.maturity_level ? `<p><strong>${escapeHtml(labels.maturityLevel)}:</strong> ${escapeHtml(verdict.maturity_level)}</p>` : ""}
+      ${verdict.verdict ? `<p>${escapeHtml(verdict.verdict)}</p>` : ""}
+      ${verdict.most_important_issue ? `<p><strong>${escapeHtml(labels.mostImportantIssue)}:</strong> ${escapeHtml(verdict.most_important_issue)}</p>` : ""}
+      ${verdict.most_important_improvement ? `<p><strong>${escapeHtml(labels.mostImportantImprovement)}:</strong> ${escapeHtml(verdict.most_important_improvement)}</p>` : ""}
     </section>
   `;
 }
 
-function renderAnalysisSection(title, section = {}, labels = getAnalysisLabels()) {
+function renderScoredSection(title, section = {}, labels = getAnalysisLabels(), sectionKey = "") {
   return `
     <section class="analysis-result-section">
       <div class="analysis-section-heading">
         <h3>${escapeHtml(title)}</h3>
-        ${renderScore(section.score, labels.score)}
+        ${renderScore(section.score, labels, sectionKey)}
       </div>
       ${section.assessment ? `<p>${escapeHtml(section.assessment)}</p>` : ""}
-      ${renderList(labels.strengths, section.strengths)}
-      ${renderList(labels.weaknesses, section.weaknesses)}
-      ${renderList(labels.improvementPoints, section.improvement_points)}
+      ${renderList(labels.keyPoints, section.key_points, 3)}
     </section>
   `;
 }
 
-function renderScore(score, label) {
-  const numericScore = Number(score);
-  const displayScore = Number.isFinite(numericScore) ? `${numericScore}/10` : "Not scored";
-  return `<span class="score-pill">${escapeHtml(label)}: ${escapeHtml(displayScore)}</span>`;
+function renderInsightSection(title, section = {}, labels = getAnalysisLabels()) {
+  return `
+    <section class="analysis-result-section">
+      <h3>${escapeHtml(title)}</h3>
+      ${section.assessment ? `<p>${escapeHtml(section.assessment)}</p>` : ""}
+      ${renderList(labels.keyPoints, section.key_points, 4)}
+    </section>
+  `;
 }
 
-function renderList(title, items) {
-  const safeItems = Array.isArray(items) ? items.slice(0, 3) : [];
+function renderRecommendations(recommendations = [], labels = getAnalysisLabels()) {
+  const safeRecommendations = Array.isArray(recommendations)
+    ? recommendations.filter(item => item && typeof item === "object").slice(0, 3)
+    : [];
+  if (safeRecommendations.length === 0) return "";
+
+  return `
+    <section class="analysis-result-section">
+      <h3>${escapeHtml(labels.sections.topRecommendations)}</h3>
+      <div class="recommendation-list">
+        ${safeRecommendations.map(item => `
+          <div class="recommendation-item">
+            <strong>${escapeHtml(item.recommendation || "")}</strong>
+            ${item.why_it_matters ? `<p><strong>${escapeHtml(labels.whyItMatters)}:</strong> ${escapeHtml(item.why_it_matters)}</p>` : ""}
+          </div>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderMissingContext(section = {}, labels = getAnalysisLabels()) {
+  const assessment = section.assessment || labels.noMajorMissingContext;
+
+  return `
+    <section class="analysis-result-section">
+      <h3>${escapeHtml(labels.sections.missingContext)}</h3>
+      <p>${escapeHtml(assessment)}</p>
+      ${renderList(labels.keyPoints, section.items, 3)}
+    </section>
+  `;
+}
+
+function renderScore(score, labels, sectionKey = "") {
+  const numericScore = Number(score);
+  const scoreStatus = getScoreStatus(numericScore, sectionKey, labels);
+
+  return `
+    <span class="score-pill score-pill-${scoreStatus.color}">
+      ${escapeHtml(scoreStatus.label)}
+    </span>
+  `;
+}
+
+function renderList(title, items, limit = 3) {
+  const safeItems = Array.isArray(items) ? items.slice(0, limit) : [];
   if (safeItems.length === 0) return "";
 
   return `
@@ -402,6 +492,22 @@ function renderList(title, items) {
 
 function getAnalysisLabels() {
   return analysisLabels[selectedLanguage] || analysisLabels.English;
+}
+
+function getScoreStatus(score, sectionKey, labels) {
+  if (!Number.isFinite(score)) {
+    return { color: "neutral", label: labels.notScored };
+  }
+
+  if (concernScoreSections.has(sectionKey)) {
+    if (score <= 3) return { color: "green", label: labels.statusLabels.lowConcern };
+    if (score <= 6) return { color: "orange", label: labels.statusLabels.moderateConcern };
+    return { color: "red", label: labels.statusLabels.highConcern };
+  }
+
+  if (score >= 8) return { color: "green", label: labels.statusLabels.strong };
+  if (score >= 5) return { color: "orange", label: labels.statusLabels.needsRefinement };
+  return { color: "red", label: labels.statusLabels.needsAttention };
 }
 
 function getGeminiText(data) {
@@ -444,60 +550,6 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
-}
-
-function formatPlainText(text) {
-  const lines = escapeHtml(text).split("\n");
-
-  // Gemini often returns Markdown. This small formatter supports the Markdown
-  // patterns we ask for without adding a full Markdown library to the demo.
-  return lines.map(line => {
-    const trimmed = line.trim();
-
-    if (!trimmed) {
-      return "";
-    }
-
-    const headingMatch = trimmed.match(/^#{1,6}\s+(.+)$/);
-    if (headingMatch) {
-      return `<h3>${formatInlineMarkdown(headingMatch[1])}</h3>`;
-    }
-
-    const boldNumberedHeadingMatch = trimmed.match(/^\*\*(\d+\.\s+.+?)\*\*$/);
-    if (boldNumberedHeadingMatch) {
-      return `<h3>${formatInlineMarkdown(boldNumberedHeadingMatch[1])}</h3>`;
-    }
-
-    const numberedHeadingMatch = trimmed.match(/^(\d+\.\s+.+)$/);
-    if (numberedHeadingMatch && isAnalysisSectionHeading(trimmed)) {
-      return `<h3>${formatInlineMarkdown(numberedHeadingMatch[1])}</h3>`;
-    }
-
-    const bulletMatch = trimmed.match(/^[-*]\s+(.+)$/);
-    if (bulletMatch) {
-      return `<div class="analysis-bullet">${formatInlineMarkdown(bulletMatch[1])}</div>`;
-    }
-
-    return `<p>${formatInlineMarkdown(trimmed)}</p>`;
-  }).join("");
-}
-
-function formatInlineMarkdown(text) {
-  return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-}
-
-function isAnalysisSectionHeading(line) {
-  return [
-    "1. Executive summary",
-    "2. Cognitive load score, 1-10",
-    "3. Decision alignment score, 1-10",
-    "4. Context alignment",
-    "5. Cognitive psychology analysis",
-    "6. Decision-support analysis",
-    "7. Key risks",
-    "8. Recommendations",
-    "9. Missing context"
-  ].some(sectionHeading => line.toLowerCase() === sectionHeading.toLowerCase());
 }
 
 // Backwards-compatible name for the previous button handler.

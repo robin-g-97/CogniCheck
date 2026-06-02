@@ -210,15 +210,36 @@ body {
 }
 
 .score-pill {
-  background: var(--color-bg-amber);
-  border: 1px solid rgba(217, 119, 6, 0.25);
   border-radius: 999px;
-  color: var(--color-amber);
   flex: 0 0 auto;
   font-size: 0.9rem;
   font-weight: 800;
   line-height: 1.2;
   padding: 7px 10px;
+}
+
+.score-pill-green {
+  background: var(--color-bg-green);
+  border: 1px solid rgba(22, 163, 74, 0.25);
+  color: var(--color-green);
+}
+
+.score-pill-orange {
+  background: var(--color-bg-amber);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  color: var(--color-amber);
+}
+
+.score-pill-red {
+  background: #FEE2E2;
+  border: 1px solid rgba(185, 28, 28, 0.25);
+  color: #B91C1C;
+}
+
+.score-pill-neutral {
+  background: #F5F5F4;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
 }
 
 .analysis-list-group {
@@ -232,6 +253,21 @@ body {
 
 .analysis-list-group li {
   margin-bottom: 6px;
+}
+
+.recommendation-list {
+  display: grid;
+  gap: 10px;
+}
+
+.recommendation-item {
+  border-left: 3px solid var(--color-amber);
+  padding-left: 12px;
+}
+
+.recommendation-item p {
+  color: var(--color-text-secondary);
+  margin-top: 6px;
 }
 
 .analysis-print-button {
@@ -915,6 +951,131 @@ nav {
   resize: vertical;
 }
 
+.contact-form-status {
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  margin: 0;
+}
+
+.contact-form-status-success {
+  color: var(--color-green);
+}
+
+.contact-form-status-error {
+  color: #B91C1C;
+}
+
+.direct-email {
+  color: var(--color-text-secondary);
+  margin-top: 12px;
+}
+
+.direct-email a {
+  color: var(--color-amber);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.direct-email a:hover {
+  color: var(--color-green);
+}
+
+/* Methodology and demo pages */
+/* These static pages explain the product method and provide a protected demo entry point. */
+.methodology-page {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 56px 24px 96px;
+}
+
+.methodology-hero {
+  max-width: 860px;
+  padding: 32px 0 40px;
+}
+
+.methodology-hero h1 {
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 1.05;
+  margin: 0 0 18px;
+}
+
+.methodology-hero p {
+  color: #44403C;
+  font-size: 1.12rem;
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+
+.methodology-card,
+.demo-card,
+.step-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(28, 25, 23, 0.05);
+  padding: 28px;
+}
+
+.methodology-card {
+  margin-top: 28px;
+}
+
+.methodology-card h2,
+.demo-card h2,
+.step-card h2 {
+  line-height: 1.25;
+  margin: 0 0 12px;
+}
+
+.methodology-card p,
+.demo-card p,
+.step-card p,
+.step-card li,
+.recommended-flow li {
+  color: #44403C;
+  line-height: 1.7;
+}
+
+.demo-card-grid,
+.method-step-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.demo-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-card p {
+  flex: 1;
+}
+
+.step-card span {
+  background: var(--color-bg-amber);
+  border-radius: 999px;
+  color: var(--color-amber);
+  display: inline-grid;
+  font-weight: 800;
+  height: 34px;
+  margin-bottom: 16px;
+  place-items: center;
+  width: 34px;
+}
+
+.step-card ul,
+.recommended-flow {
+  margin: 12px 0 0;
+  padding-left: 22px;
+}
+
+.methodology-note {
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  margin-top: 14px;
+}
+
 /* Mobile styles */
 /* On smaller screens, two-column layouts stack vertically and spacing tightens. */
 @media (max-width: 900px) {
@@ -952,6 +1113,10 @@ nav {
   .analytics-grid,
   .analytics-breakdown {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .methodology-page {
+    padding: 40px 20px 80px;
   }
 }
 
