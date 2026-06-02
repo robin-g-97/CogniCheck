@@ -13,10 +13,12 @@ function cleanText(value = "", maxLength = 4000) {
   return String(value).trim().slice(0, maxLength);
 }
 
-function buildContactEmail({ name, email, message }) {
+function buildContactEmail({ name, email, organization, interest, message }) {
   return [
     `Name: ${name}`,
     `Email: ${email}`,
+    `Organization: ${organization || "(not provided)"}`,
+    `Interest: ${interest || "(not provided)"}`,
     "",
     "Message:",
     message
@@ -37,6 +39,8 @@ router.post("/api/contact", async (req, res) => {
   const resendApiKey = process.env.RESEND_API_KEY;
   const name = cleanText(req.body.name, 120);
   const email = cleanText(req.body.email, 200);
+  const organization = cleanText(req.body.organization, 160);
+  const interest = cleanText(req.body.interest, 120);
   const message = cleanText(req.body.message);
 
   if (!name || !isValidEmail(email) || !message) {
@@ -61,7 +65,7 @@ router.post("/api/contact", async (req, res) => {
         to: contactToEmail,
         reply_to: email,
         subject: `CogniCheck contact: ${name}`,
-        text: buildContactEmail({ name, email, message })
+        text: buildContactEmail({ name, email, organization, interest, message })
       })
     });
 

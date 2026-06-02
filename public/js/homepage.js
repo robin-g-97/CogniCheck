@@ -137,6 +137,26 @@ function createField(id, labelText, type = "text") {
   return { group, input };
 }
 
+function createSelectField(id, labelText, options = []) {
+  const group = createElement("div", { className: "form-field" });
+  const label = createElement("label", { text: labelText });
+  const select = createElement("select");
+
+  label.htmlFor = id;
+  select.id = id;
+  select.name = id;
+  select.required = true;
+
+  options.forEach(optionText => {
+    const option = createElement("option", { text: optionText });
+    option.value = optionText;
+    select.appendChild(option);
+  });
+
+  group.append(label, select);
+  return { group, input: select };
+}
+
 function createContactForm(contactContent) {
   const form = createElement("form", { className: "contact-form" });
   form.action = "/api/contact";
@@ -144,6 +164,12 @@ function createContactForm(contactContent) {
 
   const nameField = createField("contact-name", contactContent.nameLabel);
   const emailField = createField("contact-email", contactContent.emailLabel, "email");
+  const organizationField = contactContent.organizationLabel
+    ? createField("contact-organization", contactContent.organizationLabel)
+    : null;
+  const interestField = contactContent.interestLabel
+    ? createSelectField("contact-interest", contactContent.interestLabel, contactContent.interestOptions || [])
+    : null;
 
   const messageGroup = createElement("div", { className: "form-field" });
   const messageLabel = createElement("label", { text: contactContent.messageLabel });
@@ -166,7 +192,15 @@ function createContactForm(contactContent) {
 
   const status = createElement("p", { className: "contact-form-status" });
 
-  form.append(nameField.group, emailField.group, messageGroup, button, status);
+  form.append(
+    nameField.group,
+    emailField.group,
+    ...(organizationField ? [organizationField.group] : []),
+    ...(interestField ? [interestField.group] : []),
+    messageGroup,
+    button,
+    status
+  );
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
@@ -182,6 +216,8 @@ function createContactForm(contactContent) {
         body: JSON.stringify({
           name: nameField.input.value,
           email: emailField.input.value,
+          organization: organizationField?.input.value || "",
+          interest: interestField?.input.value || "",
           message: messageInput.value
         })
       });

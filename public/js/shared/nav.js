@@ -14,12 +14,12 @@ function renderPublicNavigation() {
     <nav class="site-nav">
       <a class="nav-brand" href="/">CogniCheck</a>
       <div class="nav-links">
-        <a href="/#features">Features</a>
+        <a href="/workshop.html">Workshop</a>
         <a href="/methodology.html">Methodology</a>
-        <a href="/#workshops">Workshops</a>
         <a href="/#about">About</a>
+        <a href="/privacy.html">Privacy</a>
         <a href="/#contact">Contact</a>
-        <a class="nav-demo-button" href="/demo.html">Request demo</a>
+        <a class="nav-demo-button" href="/#contact">Book an intake</a>
       </div>
     </nav>
   `;

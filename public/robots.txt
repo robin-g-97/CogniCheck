@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /demo.html
+Disallow: /Analysis.html
+Disallow: /requirements-page.html
+Disallow: /analytics.html
+
+Sitemap: https://www.cognicheck.tech/sitemap.xml

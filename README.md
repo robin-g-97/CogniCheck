@@ -23,6 +23,10 @@ CogniCheck Server is a Node.js and Express application for running AI-assisted a
 |   +-- Analysis.html        Screenshot analysis page
 |   +-- demo.html            Protected demo landing page
 |   +-- methodology.html     Public methodology overview
+|   +-- workshop.html        Public workshop offer page
+|   +-- privacy.html         Public data handling page
+|   +-- robots.txt           Search engine crawl rules
+|   +-- sitemap.xml          Public page sitemap
 |   +-- requirements-page.html
 |   +-- css/
 |   +-- js/
@@ -97,12 +101,20 @@ http://localhost:3000
 - `/methodology.html` - public CogniCheck methodology overview
 - `/methodology-requirements.html` - public Requirements to Blueprint methodology
 - `/methodology-analysis.html` - public Report Analysis methodology
+- `/workshop.html` - public workshop + tool access offer
+- `/privacy.html` - public privacy and data handling page
 - `/demo.html` - protected demo landing page after login
 - `/Analysis.html` - protected screenshot analysis workflow
 - `/requirements-page.html` - protected requirements-to-blueprint workflow
 - `/analytics.html` - protected analytics dashboard for views, analysis counts, and LLM output logs
 
-When `APP_PASSWORD` is configured, successful login redirects to `/demo.html`. Public visitors can read the methodology pages without logging in, while `/demo.html`, `/Analysis.html`, `/requirements-page.html`, and `/analytics.html` remain protected.
+When `APP_PASSWORD` is configured, successful login redirects to `/demo.html`. Public visitors can read the methodology, workshop and privacy pages without logging in, while `/demo.html`, `/Analysis.html`, `/requirements-page.html`, and `/analytics.html` remain protected.
+
+The public website is positioned around a paid workshop plus temporary tool access journey: visitors can read the methodology, review the workshop offer, book an intake, and then use the protected demo tools during a pilot or workshop.
+
+## SEO
+
+Public pages include page-specific titles, descriptions, canonical URLs and Open Graph metadata. Protected demo/tool pages use `noindex,nofollow`. `robots.txt` allows public pages and excludes protected pages, while `sitemap.xml` lists the public pages intended for indexing.
 
 ## CogniCheck Analysis Flow
 
