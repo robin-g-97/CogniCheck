@@ -103,6 +103,17 @@ function requireLogin(req, res, next) {
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
+
+// Redirect apex domain to www subdomain
+app.use((req, res, next) => {
+  const host = req.get("host");
+  if (host === "cognicheck.tech") {
+    const protocol = req.secure || req.get("x-forwarded-proto") === "https" ? "https" : "http";
+    return res.redirect(301, `${protocol}://www.cognicheck.tech${req.originalUrl}`);
+  }
+  next();
+});
+
 // The contact form is public because visitors need to request demos before logging in.
 app.use(contactRoutes);
 
@@ -152,3 +163,4 @@ app.use(analyzeRequirementsRoutes);
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+
