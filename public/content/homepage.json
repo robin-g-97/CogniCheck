@@ -13,6 +13,11 @@
         "variant": "primary"
       },
       {
+        "label": "Go to CogniCheck",
+        "href": "#access",
+        "variant": "secondary"
+      },
+      {
         "label": "View workshop",
         "href": "/workshop.html",
         "variant": "secondary"
@@ -110,6 +115,32 @@
           "label": "Request access"
         }
       ]
+    },
+    {
+      "id": "access",
+      "title": "Go to CogniCheck",
+      "body": [
+        "Already have workshop or pilot access? Enter your password to open the protected CogniCheck demo environment."
+      ],
+      "login": {
+        "label": "Access password",
+        "buttonLabel": "Enter CogniCheck"
+      },
+      "cards": [
+        {
+          "title": "Report Analysis",
+          "body": "Upload a dashboard screenshot and review cognitive load, decision alignment and recommendations.",
+          "href": "/Analysis.html",
+          "label": "Open report analysis"
+        },
+        {
+          "title": "Requirements to Blueprint",
+          "body": "Turn dashboard requirements into a structured BI blueprint with assumptions, risks and next steps.",
+          "href": "/requirements-page.html",
+          "label": "Open blueprint tool"
+        }
+      ],
+      "cardStyle": "navigation"
     },
     {
       "id": "about",

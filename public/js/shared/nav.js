@@ -16,6 +16,7 @@ function renderPublicNavigation() {
       <div class="nav-links">
         <a href="/workshop.html">Workshop</a>
         <a href="/methodology.html">Methodology</a>
+        <a href="/#access">Go to CogniCheck</a>
         <a href="/#about">About</a>
         <a href="/privacy.html">Privacy</a>
         <a href="/#contact">Contact</a>
