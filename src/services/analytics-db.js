@@ -53,23 +53,49 @@ async function ensureAnalyticsTables() {
       create table if not exists analysis_events (
         id bigserial primary key,
         created_at timestamptz not null default now(),
+        request_id text,
+        user_email text,
         mode text not null,
         selected_language text,
         success boolean not null,
         error text
       );
 
+      create table if not exists llm_inputs (
+        id bigserial primary key,
+        created_at timestamptz not null default now(),
+        request_id text not null,
+        user_email text,
+        mode text not null,
+        selected_language text,
+        input text not null
+      );
+
       create table if not exists llm_outputs (
         id bigserial primary key,
         created_at timestamptz not null default now(),
+        request_id text,
+        user_email text,
         mode text not null,
         selected_language text,
         output text not null
       );
 
+      alter table analysis_events add column if not exists request_id text;
+      alter table analysis_events add column if not exists user_email text;
+      alter table llm_outputs add column if not exists request_id text;
+      alter table llm_outputs add column if not exists user_email text;
+
       create index if not exists page_views_created_at_idx on page_views (created_at desc);
       create index if not exists analysis_events_created_at_idx on analysis_events (created_at desc);
+      create index if not exists analysis_events_request_id_idx on analysis_events (request_id);
+      create index if not exists analysis_events_user_email_idx on analysis_events (user_email);
+      create index if not exists llm_inputs_created_at_idx on llm_inputs (created_at desc);
+      create index if not exists llm_inputs_request_id_idx on llm_inputs (request_id);
+      create index if not exists llm_inputs_user_email_idx on llm_inputs (user_email);
       create index if not exists llm_outputs_created_at_idx on llm_outputs (created_at desc);
+      create index if not exists llm_outputs_request_id_idx on llm_outputs (request_id);
+      create index if not exists llm_outputs_user_email_idx on llm_outputs (user_email);
     `)
       .then(() => {
         initialized = true;
@@ -109,23 +135,33 @@ async function trackPageView(req) {
   );
 }
 
-async function trackAnalysisEvent({ mode, selectedLanguage, success, error }) {
+async function trackAnalysisEvent({ requestId, userEmail, mode, selectedLanguage, success, error }) {
   if (!pool) return;
 
   await safeQuery(
-    `insert into analysis_events (mode, selected_language, success, error)
-     values ($1, $2, $3, $4)`,
-    [mode, selectedLanguage || "", success, error || ""]
+    `insert into analysis_events (request_id, user_email, mode, selected_language, success, error)
+     values ($1, $2, $3, $4, $5, $6)`,
+    [requestId || "", userEmail || "", mode, selectedLanguage || "", success, error || ""]
   );
 }
 
-async function trackLlmOutput({ mode, selectedLanguage, output }) {
+async function trackLlmInput({ requestId, userEmail, mode, selectedLanguage, input }) {
+  if (!pool || !outputLoggingEnabled || !input) return;
+
+  await safeQuery(
+    `insert into llm_inputs (request_id, user_email, mode, selected_language, input)
+     values ($1, $2, $3, $4, $5)`,
+    [requestId || "", userEmail || "", mode, selectedLanguage || "", input]
+  );
+}
+
+async function trackLlmOutput({ requestId, userEmail, mode, selectedLanguage, output }) {
   if (!pool || !outputLoggingEnabled || !output) return;
 
   await safeQuery(
-    `insert into llm_outputs (mode, selected_language, output)
-     values ($1, $2, $3)`,
-    [mode, selectedLanguage || "", output]
+    `insert into llm_outputs (request_id, user_email, mode, selected_language, output)
+     values ($1, $2, $3, $4, $5)`,
+    [requestId || "", userEmail || "", mode, selectedLanguage || "", output]
   );
 }
 
@@ -134,7 +170,8 @@ async function getAnalyticsSummary() {
     return {
       configured: false,
       pageViews: { total: 0, byPath: {}, uniqueViewerEstimate: 0 },
-      analyses: { totalEvents: 0, successful: 0, failed: 0, byMode: {}, byLanguage: {} },
+      analyses: { totalEvents: 0, successful: 0, failed: 0, byMode: {}, byLanguage: {}, byEmail: {} },
+      inputs: { stored: 0 },
       outputs: { stored: 0, latest: [] }
     };
   }
@@ -146,6 +183,8 @@ async function getAnalyticsSummary() {
     analysisTotals,
     analysisByMode,
     analysisByLanguage,
+    analysisByEmail,
+    inputTotal,
     outputTotal,
     latestOutputs
   ] = await Promise.all([
@@ -161,8 +200,10 @@ async function getAnalyticsSummary() {
     `),
     safeQuery("select mode, count(*)::int as count from analysis_events group by mode order by count desc"),
     safeQuery("select selected_language, count(*)::int as count from analysis_events group by selected_language order by count desc"),
+    safeQuery("select user_email, count(*)::int as count from analysis_events group by user_email order by count desc"),
+    safeQuery("select count(*)::int as count from llm_inputs"),
     safeQuery("select count(*)::int as count from llm_outputs"),
-    safeQuery("select id, created_at, mode, selected_language from llm_outputs order by created_at desc limit 10")
+    safeQuery("select id, request_id, user_email, created_at, mode, selected_language from llm_outputs order by created_at desc limit 10")
   ]);
 
   const totals = analysisTotals.rows[0] || {};
@@ -179,12 +220,18 @@ async function getAnalyticsSummary() {
       successful: totals.successful || 0,
       failed: totals.failed || 0,
       byMode: rowsToCountMap(analysisByMode.rows, "mode"),
-      byLanguage: rowsToCountMap(analysisByLanguage.rows, "selected_language")
+      byLanguage: rowsToCountMap(analysisByLanguage.rows, "selected_language"),
+      byEmail: rowsToCountMap(analysisByEmail.rows, "user_email")
+    },
+    inputs: {
+      stored: inputTotal.rows[0]?.count || 0
     },
     outputs: {
       stored: outputTotal.rows[0]?.count || 0,
       latest: latestOutputs.rows.map(row => ({
         id: row.id,
+        requestId: row.request_id,
+        userEmail: row.user_email,
         timestamp: row.created_at,
         mode: row.mode,
         selectedLanguage: row.selected_language
@@ -199,7 +246,7 @@ async function getStoredOutputs(limit = 20) {
   }
 
   const result = await safeQuery(
-    `select id, created_at, mode, selected_language, output
+    `select id, request_id, user_email, created_at, mode, selected_language, output
      from llm_outputs
      order by created_at desc
      limit $1`,
@@ -208,10 +255,36 @@ async function getStoredOutputs(limit = 20) {
 
   return result.rows.map(row => ({
     id: row.id,
+    requestId: row.request_id,
+    userEmail: row.user_email,
     timestamp: row.created_at,
     mode: row.mode,
     selectedLanguage: row.selected_language,
     output: row.output
+  }));
+}
+
+async function getStoredInputs(limit = 20) {
+  if (!pool) {
+    return [];
+  }
+
+  const result = await safeQuery(
+    `select id, request_id, user_email, created_at, mode, selected_language, input
+     from llm_inputs
+     order by created_at desc
+     limit $1`,
+    [limit]
+  );
+
+  return result.rows.map(row => ({
+    id: row.id,
+    requestId: row.request_id,
+    userEmail: row.user_email,
+    timestamp: row.created_at,
+    mode: row.mode,
+    selectedLanguage: row.selected_language,
+    input: row.input
   }));
 }
 
@@ -224,8 +297,10 @@ function rowsToCountMap(rows, key) {
 
 module.exports = {
   getAnalyticsSummary,
+  getStoredInputs,
   getStoredOutputs,
   trackAnalysisEvent,
+  trackLlmInput,
   trackLlmOutput,
   trackPageView,
 };

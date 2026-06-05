@@ -51,13 +51,56 @@ function getAuthSecret() {
   return process.env.MAGIC_LINK_SECRET || process.env.APP_PASSWORD || process.env.RESEND_API_KEY || "development";
 }
 
-function buildSessionToken() {
+function buildLegacySessionToken() {
   return `${sessionCookieValue}.${signSession(sessionCookieValue)}`;
 }
 
-function hasValidSession(req) {
+function buildSessionToken(email = "") {
+  const payload = Buffer.from(JSON.stringify({
+    value: sessionCookieValue,
+    email: normalizeEmail(email),
+    issuedAt: Date.now()
+  })).toString("base64url");
+
+  return `${payload}.${signSession(payload)}`;
+}
+
+function readSession(req) {
   const cookies = parseCookies(req.headers.cookie);
-  return cookies[sessionCookieName] === buildSessionToken();
+  const token = cookies[sessionCookieName] || "";
+
+  if (token === buildLegacySessionToken()) {
+    return { authenticated: true, email: "" };
+  }
+
+  const [payload, signature] = token.split(".");
+
+  if (!payload || !signature || !timingSafeStringEqual(signature, signSession(payload))) {
+    return null;
+  }
+
+  try {
+    const session = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+
+    if (session.value !== sessionCookieValue) {
+      return null;
+    }
+
+    return {
+      authenticated: true,
+      email: normalizeEmail(session.email || "")
+    };
+  } catch {
+    return null;
+  }
+}
+
+function hasValidSession(req) {
+  return Boolean(readSession(req));
+}
+
+function getSessionEmail(req) {
+  return readSession(req)?.email || "";
 }
 
 function isValidEmail(email = "") {
@@ -257,6 +300,10 @@ function requireLogin(req, res, next) {
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
+app.use((req, res, next) => {
+  req.sessionEmail = getSessionEmail(req);
+  next();
+});
 
 // Redirect apex domain to www subdomain
 app.use((req, res, next) => {
@@ -295,7 +342,7 @@ app.post("/login", (req, res) => {
   }
 
   if (appPassword && passwordsMatch(submittedPassword, appPassword)) {
-    res.cookie(sessionCookieName, buildSessionToken(), {
+    res.cookie(sessionCookieName, buildSessionToken("password-login"), {
       httpOnly: true,
       sameSite: "lax",
       secure: req.secure || req.headers["x-forwarded-proto"] === "https",
@@ -315,7 +362,7 @@ app.get("/login", (req, res) => {
     return res.redirect("/?login=failed");
   }
 
-  res.cookie(sessionCookieName, buildSessionToken(), {
+  res.cookie(sessionCookieName, buildSessionToken(email), {
     httpOnly: true,
     sameSite: "lax",
     secure: req.secure || req.headers["x-forwarded-proto"] === "https",
@@ -331,7 +378,7 @@ app.get("/logout", (req, res) => {
 });
 
 app.get("/session", (req, res) => {
-  res.json({ authenticated: hasValidSession(req) });
+  res.json({ authenticated: hasValidSession(req), email: getSessionEmail(req) });
 });
 
 app.use(requireLogin);
@@ -353,4 +400,3 @@ app.use(analyzeRequirementsRoutes);
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-

@@ -76,7 +76,7 @@ PORT=3000
 
 `RESEND_API_KEY` is required for email login links. `APP_BASE_URL` should be set in Railway so access links use the public site URL. `MAGIC_LINK_SECRET` is recommended for stable, private signing of login links; when it is not set, the server falls back to `APP_PASSWORD`, then `RESEND_API_KEY`.
 
-`DATABASE_URL` enables PostgreSQL-backed analytics. In Railway, set it to `${{Postgres.DATABASE_URL}}` after adding a PostgreSQL service. `OUTPUT_LOGGING_ENABLED=false` disables storing generated LLM outputs.
+`DATABASE_URL` enables PostgreSQL-backed analytics. In Railway, set it to `${{Postgres.DATABASE_URL}}` after adding a PostgreSQL service. `OUTPUT_LOGGING_ENABLED=false` disables storing generated LLM inputs and outputs. When logging is enabled, LLM inputs and outputs are linked by `request_id` and include the authenticated login email address when available.
 
 `RESEND_API_KEY` enables the homepage contact form and access links to send email directly from the backend. Replace `your_resend_api_key` with your real Resend API key. By default, messages are sent to `robin@cognicheck.tech` from Resend's test sender, `onboarding@resend.dev`. For the most professional setup, verify `cognicheck.tech` in Resend and then set `CONTACT_FROM_EMAIL` to an address on that domain, such as `CogniCheck <contact@cognicheck.tech>`.
 
@@ -111,7 +111,7 @@ http://localhost:3000
 - `/demo.html` - protected demo landing page after login
 - `/Analysis.html` - protected screenshot analysis workflow
 - `/requirements-page.html` - protected requirements-to-blueprint workflow
-- `/analytics.html` - protected analytics dashboard for views, analysis counts, and LLM output logs
+- `/analytics.html` - protected analytics dashboard for views, analysis counts, and linked LLM input/output logs
 
 When access protection is enabled, successful email login redirects to `/demo.html`. Public visitors can read the methodology, workshop and privacy pages without logging in, while `/demo.html`, `/Analysis.html`, `/requirements-page.html`, and `/analytics.html` remain protected.
 
@@ -149,6 +149,7 @@ AI responses can occasionally contain invalid JSON, especially malformed escaped
 - `POST /api/analyze-report` - imports report context or performs full CogniCheck analysis with server-side prompts
 - `POST /api/analyze-requirements` - analyzes requirements text and returns generated blueprint content
 - `GET /api/analytics/summary` - returns protected PostgreSQL-backed viewer and analysis counts
+- `GET /api/analytics/inputs?limit=20` - returns protected generated LLM input logs
 - `GET /api/analytics/outputs?limit=20` - returns protected generated LLM output logs
 - `POST /api/contact` - sends homepage contact form submissions to the configured contact email
 - `POST /login` - sends a magic login link to an allowed email address
