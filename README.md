@@ -4,7 +4,7 @@ CogniCheck Server is a Node.js and Express application for running AI-assisted a
 
 ## Features
 
-- Password-protected demo access with an optional `APP_PASSWORD`
+- Email-based demo access with an `ALLOWED_EMAILS` allowlist and magic links
 - Screenshot/image upload analysis via Gemini
 - Requirements document analysis for generating blueprint-style output
 - Two-step CogniCheck report analysis: import structured context, then run the final analysis
@@ -59,7 +59,10 @@ Create a `.env` file in the project root:
 ```env
 GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=gemini-2.5-flash-lite
-APP_PASSWORD=optional_demo_password
+APP_PASSWORD=optional_legacy_demo_password
+ALLOWED_EMAILS=robin@cognicheck.tech,estienstra@ilionx.com
+APP_BASE_URL=https://www.cognicheck.tech
+MAGIC_LINK_SECRET=long_random_secret_for_login_links
 REQUIREMENTS_BLUEPRINT_PROMPT=requirements_analysis_prompt_with_optional_{{requirements}}_placeholder
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 OUTPUT_LOGGING_ENABLED=true
@@ -69,11 +72,13 @@ CONTACT_FROM_EMAIL=onboarding@resend.dev
 PORT=3000
 ```
 
-`GEMINI_API_KEY` and `REQUIREMENTS_BLUEPRINT_PROMPT` are required for AI analysis. `APP_PASSWORD` is optional; when it is not set, the app runs without login protection. The CogniCheck report analysis prompt lives server-side in `src/prompts/`, so it does not need to be configured in Railway. The prompt builder also loads Markdown files from `backend/knowledge/` and injects them into the final CogniCheck prompt on the server only. If `REQUIREMENTS_BLUEPRINT_PROMPT` includes `{{requirements}}`, the uploaded requirements text is inserted there. Otherwise, the text is appended to the prompt automatically.
+`GEMINI_API_KEY` and `REQUIREMENTS_BLUEPRINT_PROMPT` are required for AI analysis. `ALLOWED_EMAILS` controls who can request a CogniCheck access link. Add exact email addresses separated by commas, or add a domain such as `@cognicheck.tech` or `cognicheck.tech` to allow every address on that domain. The app includes `robin@cognicheck.tech` and `estienstra@ilionx.com` as local defaults when `ALLOWED_EMAILS` is not configured. `APP_PASSWORD` is only kept as an optional legacy fallback. The CogniCheck report analysis prompt lives server-side in `src/prompts/`, so it does not need to be configured in Railway. The prompt builder also loads Markdown files from `backend/knowledge/` and injects them into the final CogniCheck prompt on the server only. If `REQUIREMENTS_BLUEPRINT_PROMPT` includes `{{requirements}}`, the uploaded requirements text is inserted there. Otherwise, the text is appended to the prompt automatically.
+
+`RESEND_API_KEY` is required for email login links. `APP_BASE_URL` should be set in Railway so access links use the public site URL. `MAGIC_LINK_SECRET` is recommended for stable, private signing of login links; when it is not set, the server falls back to `APP_PASSWORD`, then `RESEND_API_KEY`.
 
 `DATABASE_URL` enables PostgreSQL-backed analytics. In Railway, set it to `${{Postgres.DATABASE_URL}}` after adding a PostgreSQL service. `OUTPUT_LOGGING_ENABLED=false` disables storing generated LLM outputs.
 
-`RESEND_API_KEY` enables the homepage contact form to send email directly from the backend. Replace `your_resend_api_key` with your real Resend API key. By default, messages are sent to `robin@cognicheck.tech` from Resend's test sender, `onboarding@resend.dev`. For the most professional setup, verify `cognicheck.tech` in Resend and then set `CONTACT_FROM_EMAIL` to an address on that domain, such as `CogniCheck <contact@cognicheck.tech>`.
+`RESEND_API_KEY` enables the homepage contact form and access links to send email directly from the backend. Replace `your_resend_api_key` with your real Resend API key. By default, messages are sent to `robin@cognicheck.tech` from Resend's test sender, `onboarding@resend.dev`. For the most professional setup, verify `cognicheck.tech` in Resend and then set `CONTACT_FROM_EMAIL` to an address on that domain, such as `CogniCheck <contact@cognicheck.tech>`.
 
 ## Running Locally
 
@@ -108,7 +113,7 @@ http://localhost:3000
 - `/requirements-page.html` - protected requirements-to-blueprint workflow
 - `/analytics.html` - protected analytics dashboard for views, analysis counts, and LLM output logs
 
-When `APP_PASSWORD` is configured, successful login redirects to `/demo.html`. Public visitors can read the methodology, workshop and privacy pages without logging in, while `/demo.html`, `/Analysis.html`, `/requirements-page.html`, and `/analytics.html` remain protected.
+When access protection is enabled, successful email login redirects to `/demo.html`. Public visitors can read the methodology, workshop and privacy pages without logging in, while `/demo.html`, `/Analysis.html`, `/requirements-page.html`, and `/analytics.html` remain protected.
 
 The public website is positioned around a paid workshop plus temporary tool access journey: visitors can read the methodology, review the workshop offer, book an intake, and then use the protected demo tools during a pilot or workshop.
 
@@ -146,7 +151,8 @@ AI responses can occasionally contain invalid JSON, especially malformed escaped
 - `GET /api/analytics/summary` - returns protected PostgreSQL-backed viewer and analysis counts
 - `GET /api/analytics/outputs?limit=20` - returns protected generated LLM output logs
 - `POST /api/contact` - sends homepage contact form submissions to the configured contact email
-- `POST /login` - starts a password-protected session when `APP_PASSWORD` is set
+- `POST /login` - sends a magic login link to an allowed email address
+- `GET /login?token=...` - starts a protected session from a valid magic link
 - `GET /logout` - clears the session
 - `GET /session` - returns the current authentication state
 

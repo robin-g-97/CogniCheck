@@ -120,11 +120,14 @@
       "id": "access",
       "title": "Go to CogniCheck",
       "body": [
-        "Already have workshop or pilot access? Enter your password to open the protected CogniCheck demo environment."
+        "Already have workshop or pilot access? Enter your email address and receive a secure CogniCheck access link."
       ],
       "login": {
-        "label": "Access password",
-        "buttonLabel": "Enter CogniCheck"
+        "label": "Email address",
+        "buttonLabel": "Send access link",
+        "sendingLabel": "Sending link...",
+        "successMessage": "Check your email for the CogniCheck access link.",
+        "errorMessage": "The access link could not be sent. Please try again later."
       },
       "cards": [
         {

@@ -103,13 +103,13 @@ function createLoginForm(loginContent) {
   form.method = "post";
 
   const label = createElement("label", { text: loginContent.label });
-  label.htmlFor = "password";
+  label.htmlFor = "access-email";
 
   const input = createElement("input");
-  input.id = "password";
-  input.name = "password";
-  input.type = "password";
-  input.autocomplete = "current-password";
+  input.id = "access-email";
+  input.name = "email";
+  input.type = "email";
+  input.autocomplete = "email";
   input.required = true;
 
   const button = createElement("button", {
@@ -118,7 +118,42 @@ function createLoginForm(loginContent) {
   });
   button.type = "submit";
 
-  form.append(label, input, button);
+  const status = createElement("p", { className: "login-form-status" });
+
+  form.append(label, input, button, status);
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    status.textContent = "";
+    status.className = "login-form-status";
+    button.disabled = true;
+    button.textContent = loginContent.sendingLabel || "Sending...";
+
+    try {
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: input.value })
+      });
+
+      if (!response.ok) {
+        const details = await response.json().catch(() => ({}));
+        throw new Error(details.error || "Access link could not be sent.");
+      }
+
+      status.textContent = loginContent.successMessage || "Check your email for the CogniCheck access link.";
+      status.classList.add("login-form-status-success");
+      form.reset();
+    } catch (error) {
+      console.error("Login request failed:", error);
+      status.textContent = loginContent.errorMessage || "The access link could not be sent. Please try again later.";
+      status.classList.add("login-form-status-error");
+    } finally {
+      button.disabled = false;
+      button.textContent = loginContent.buttonLabel;
+    }
+  });
+
   return form;
 }
 

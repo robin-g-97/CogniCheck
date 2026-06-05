@@ -952,16 +952,19 @@ nav {
   resize: vertical;
 }
 
+.login-form-status,
 .contact-form-status {
   color: var(--color-text-secondary);
   font-weight: 700;
   margin: 0;
 }
 
+.login-form-status-success,
 .contact-form-status-success {
   color: var(--color-green);
 }
 
+.login-form-status-error,
 .contact-form-status-error {
   color: #B91C1C;
 }

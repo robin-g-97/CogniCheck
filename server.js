@@ -15,6 +15,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 const sessionCookieName = "cognicheck_demo_session";
 const sessionCookieValue = "authenticated";
+const defaultAllowedEmails = "robin@cognicheck.tech,estienstra@ilionx.com";
+const magicLinkTtlMs = 1000 * 60 * 15;
 const trackedPages = new Set([
   "/",
   "/index.html",
@@ -40,9 +42,13 @@ function parseCookies(cookieHeader = "") {
 
 function signSession(value) {
   return crypto
-    .createHmac("sha256", process.env.APP_PASSWORD || "development")
+    .createHmac("sha256", getAuthSecret())
     .update(value)
     .digest("hex");
+}
+
+function getAuthSecret() {
+  return process.env.MAGIC_LINK_SECRET || process.env.APP_PASSWORD || process.env.RESEND_API_KEY || "development";
 }
 
 function buildSessionToken() {
@@ -54,6 +60,46 @@ function hasValidSession(req) {
   return cookies[sessionCookieName] === buildSessionToken();
 }
 
+function isValidEmail(email = "") {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function normalizeEmail(email = "") {
+  return String(email).trim().toLowerCase();
+}
+
+function normalizeAllowedEmailEntry(entry = "") {
+  const normalizedEntry = normalizeEmail(entry);
+  const emailMatch = normalizedEntry.match(/<([^>]+)>/);
+
+  return emailMatch ? normalizeEmail(emailMatch[1]) : normalizedEntry;
+}
+
+function getAllowedEmailEntries() {
+  return (process.env.ALLOWED_EMAILS || defaultAllowedEmails)
+    .split(",")
+    .map(entry => normalizeAllowedEmailEntry(entry))
+    .filter(Boolean);
+}
+
+function isAllowedEmail(email) {
+  const normalizedEmail = normalizeEmail(email);
+  const emailDomain = normalizedEmail.split("@")[1];
+
+  return getAllowedEmailEntries().some(entry => {
+    if (entry.includes("@") && !entry.startsWith("@")) {
+      return entry === normalizedEmail;
+    }
+
+    const allowedDomain = entry.replace(/^@/, "");
+    return allowedDomain && allowedDomain === emailDomain;
+  });
+}
+
+function isAccessProtectionEnabled() {
+  return Boolean(process.env.APP_PASSWORD || getAllowedEmailEntries().length);
+}
+
 function passwordsMatch(inputPassword, appPassword) {
   const input = Buffer.from(inputPassword);
   const expected = Buffer.from(appPassword);
@@ -61,10 +107,114 @@ function passwordsMatch(inputPassword, appPassword) {
   return input.length === expected.length && crypto.timingSafeEqual(input, expected);
 }
 
-function requireLogin(req, res, next) {
-  const appPassword = process.env.APP_PASSWORD;
+function timingSafeStringEqual(left = "", right = "") {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
 
-  if (!appPassword) {
+  return leftBuffer.length === rightBuffer.length && crypto.timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function signMagicLinkPayload(payload) {
+  return crypto
+    .createHmac("sha256", getAuthSecret())
+    .update(payload)
+    .digest("base64url");
+}
+
+function buildMagicLinkToken(email) {
+  const payload = Buffer.from(JSON.stringify({
+    email: normalizeEmail(email),
+    expiresAt: Date.now() + magicLinkTtlMs
+  })).toString("base64url");
+  const signature = signMagicLinkPayload(payload);
+
+  return `${payload}.${signature}`;
+}
+
+function verifyMagicLinkToken(token = "") {
+  const [payload, signature] = token.split(".");
+
+  if (!payload || !signature || !timingSafeStringEqual(signature, signMagicLinkPayload(payload))) {
+    return null;
+  }
+
+  try {
+    const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+
+    if (!data.email || !data.expiresAt || Date.now() > data.expiresAt || !isAllowedEmail(data.email)) {
+      return null;
+    }
+
+    return data.email;
+  } catch {
+    return null;
+  }
+}
+
+function getBaseUrl(req) {
+  const protocol = req.secure || req.get("x-forwarded-proto") === "https" ? "https" : "http";
+  return process.env.APP_BASE_URL || `${protocol}://${req.get("host")}`;
+}
+
+async function readProviderError(response) {
+  const text = await response.text();
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { message: text };
+  }
+}
+
+function buildMagicLinkEmail(loginUrl) {
+  return [
+    "Hi,",
+    "",
+    "Use this link to open CogniCheck:",
+    loginUrl,
+    "",
+    "This link expires in 15 minutes.",
+    "",
+    "If you did not request this, you can ignore this email."
+  ].join("\n");
+}
+
+async function sendMagicLinkEmail({ email, loginUrl }) {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  const from = process.env.CONTACT_FROM_EMAIL || "onboarding@resend.dev";
+
+  if (!resendApiKey) {
+    throw new Error("RESEND_API_KEY is not configured.");
+  }
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${resendApiKey}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      from,
+      to: email,
+      subject: "Your CogniCheck access link",
+      text: buildMagicLinkEmail(loginUrl)
+    })
+  });
+
+  if (!response.ok) {
+    const providerError = await readProviderError(response);
+    console.warn("Magic link email failed:", {
+      status: response.status,
+      from,
+      to: email,
+      providerError
+    });
+    throw new Error("Magic link email could not be sent.");
+  }
+}
+
+function requireLogin(req, res, next) {
+  if (!isAccessProtectionEnabled()) {
     return next();
   }
 
@@ -123,9 +273,28 @@ app.use(contactRoutes);
 
 app.post("/login", (req, res) => {
   const appPassword = process.env.APP_PASSWORD;
+  const submittedEmail = normalizeEmail(req.body.email || "");
   const submittedPassword = req.body.password || "";
 
-  if (!appPassword || passwordsMatch(submittedPassword, appPassword)) {
+  if (submittedEmail) {
+    if (!isValidEmail(submittedEmail) || !isAllowedEmail(submittedEmail)) {
+      console.warn(`Rejected CogniCheck login request for ${submittedEmail || "(empty email)"}`);
+      return res.json({ success: true });
+    }
+
+    const token = buildMagicLinkToken(submittedEmail);
+    const loginUrl = `${getBaseUrl(req)}/login?token=${encodeURIComponent(token)}`;
+
+    sendMagicLinkEmail({ email: submittedEmail, loginUrl })
+      .then(() => res.json({ success: true }))
+      .catch(error => {
+        console.warn("Magic link login failed:", error.message);
+        res.status(503).json({ error: "Access email could not be sent. Please try again later." });
+      });
+    return;
+  }
+
+  if (appPassword && passwordsMatch(submittedPassword, appPassword)) {
     res.cookie(sessionCookieName, buildSessionToken(), {
       httpOnly: true,
       sameSite: "lax",
@@ -137,6 +306,23 @@ app.post("/login", (req, res) => {
   }
 
   return res.redirect("/?login=failed");
+});
+
+app.get("/login", (req, res) => {
+  const email = verifyMagicLinkToken(req.query.token || "");
+
+  if (!email) {
+    return res.redirect("/?login=failed");
+  }
+
+  res.cookie(sessionCookieName, buildSessionToken(), {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+    maxAge: 1000 * 60 * 60 * 8
+  });
+
+  return res.redirect("/demo.html");
 });
 
 app.get("/logout", (req, res) => {
