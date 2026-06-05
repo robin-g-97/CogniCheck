@@ -59,6 +59,8 @@ Create a `.env` file in the project root:
 ```env
 GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=gemini-2.5-flash-lite
+GEMINI_IMPORT_MODEL=gemini-2.5-flash-lite
+GEMINI_ANALYSIS_MODEL=gemini-2.5-pro
 APP_PASSWORD=optional_legacy_demo_password
 ALLOWED_EMAILS=robin@cognicheck.tech,estienstra@ilionx.com
 APP_BASE_URL=https://www.cognicheck.tech
@@ -72,7 +74,7 @@ CONTACT_FROM_EMAIL=onboarding@resend.dev
 PORT=3000
 ```
 
-`GEMINI_API_KEY` and `REQUIREMENTS_BLUEPRINT_PROMPT` are required for AI analysis. `ALLOWED_EMAILS` controls who can request a CogniCheck access link. Add exact email addresses separated by commas, or add a domain such as `@cognicheck.tech` or `cognicheck.tech` to allow every address on that domain. The app includes `robin@cognicheck.tech` and `estienstra@ilionx.com` as local defaults when `ALLOWED_EMAILS` is not configured. `APP_PASSWORD` is only kept as an optional legacy fallback. The CogniCheck report analysis prompt lives server-side in `src/prompts/`, so it does not need to be configured in Railway. The prompt builder also loads Markdown files from `backend/knowledge/` and injects them into the final CogniCheck prompt on the server only. If `REQUIREMENTS_BLUEPRINT_PROMPT` includes `{{requirements}}`, the uploaded requirements text is inserted there. Otherwise, the text is appended to the prompt automatically.
+`GEMINI_API_KEY` and `REQUIREMENTS_BLUEPRINT_PROMPT` are required for AI analysis. `GEMINI_MODEL` is the default model for Gemini calls. `GEMINI_IMPORT_MODEL` can override the report import/pre-analysis step, and `GEMINI_ANALYSIS_MODEL` can override the final CogniCheck report analysis step. If either override is omitted, that step falls back to `GEMINI_MODEL`, then to `gemini-2.5-flash-lite`. `ALLOWED_EMAILS` controls who can request a CogniCheck access link. Add exact email addresses separated by commas, or add a domain such as `@cognicheck.tech` or `cognicheck.tech` to allow every address on that domain. The app includes `robin@cognicheck.tech` and `estienstra@ilionx.com` as local defaults when `ALLOWED_EMAILS` is not configured. `APP_PASSWORD` is only kept as an optional legacy fallback. The CogniCheck report analysis prompt lives server-side in `src/prompts/`, so it does not need to be configured in Railway. The prompt builder also loads Markdown files from `backend/knowledge/` and injects them into the final CogniCheck prompt on the server only. If `REQUIREMENTS_BLUEPRINT_PROMPT` includes `{{requirements}}`, the uploaded requirements text is inserted there. Otherwise, the text is appended to the prompt automatically.
 
 `RESEND_API_KEY` is required for email login links. `APP_BASE_URL` should be set in Railway so access links use the public site URL. `MAGIC_LINK_SECRET` is recommended for stable, private signing of login links; when it is not set, the server falls back to `APP_PASSWORD`, then `RESEND_API_KEY`.
 

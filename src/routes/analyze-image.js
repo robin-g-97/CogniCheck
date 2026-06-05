@@ -1,6 +1,6 @@
 const express = require("express");
 const crypto = require("crypto");
-const { callGemini, extractGeminiText } = require("../services/gemini");
+const { callGemini, extractGeminiText, getGeminiModel } = require("../services/gemini");
 const {
   buildFinalAnalysisPrompt,
   buildImportPrompt
@@ -12,6 +12,8 @@ const {
 } = require("../services/analytics-db");
 
 const router = express.Router();
+const REPORT_IMPORT_MODEL = process.env.GEMINI_IMPORT_MODEL;
+const REPORT_ANALYSIS_MODEL = process.env.GEMINI_ANALYSIS_MODEL;
 
 router.post("/analyze", async (req, res) => {
   const { base64, mimeType, prompt, maxOutputTokens } = req.body;
@@ -23,6 +25,8 @@ router.post("/analyze", async (req, res) => {
   }
 
   try {
+    const model = getGeminiModel();
+
     await trackLlmInput({
       requestId,
       userEmail,
@@ -34,7 +38,8 @@ router.post("/analyze", async (req, res) => {
           mimeType,
           base64Length: base64.length
         },
-        maxOutputTokens: maxOutputTokens || null
+        maxOutputTokens: maxOutputTokens || null,
+        model
       })
     });
 
@@ -43,6 +48,7 @@ router.post("/analyze", async (req, res) => {
         { text: prompt },
         { inline_data: { mime_type: mimeType, data: base64 } }
       ],
+      model,
       ...(maxOutputTokens && {
         generationConfig: { maxOutputTokens }
       })
@@ -101,6 +107,7 @@ router.post("/api/analyze-report", async (req, res) => {
   }
 
   try {
+    const model = getGeminiModel(mode === "import" ? REPORT_IMPORT_MODEL : REPORT_ANALYSIS_MODEL);
     const prompt =
       mode === "import"
         ? buildImportPrompt({ selectedLanguage, backgroundContext, extractedDocumentText })
@@ -128,7 +135,8 @@ router.post("/api/analyze-report", async (req, res) => {
         supportingFiles: (supportingFiles || []).map(file => ({
           mimeType: file.mimeType,
           base64Length: file.base64?.length || 0
-        }))
+        })),
+        model
       })
     });
 
@@ -145,6 +153,7 @@ router.post("/api/analyze-report", async (req, res) => {
         ...fileParts,
         { inline_data: { mime_type: image.mimeType, data: image.base64 } }
       ],
+      model,
       ...(["import", "analysis"].includes(mode) && {
         generationConfig: { responseMimeType: "application/json" }
       })
