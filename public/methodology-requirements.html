@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +13,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <title>Requirements to Blueprint Methodology | CogniCheck</title>
   <link rel="stylesheet" href="/css/style.css?v=4">
+  <script src="/js/shared/i18n.js" defer></script>
   <script src="/js/shared/nav.js?v=4" defer></script>
 </head>
 <body>
@@ -20,70 +21,71 @@
 
   <main class="methodology-page">
     <header class="methodology-hero">
-      <p class="eyebrow">Requirements to Blueprint</p>
-      <h1>From vague dashboard request to structured BI blueprint.</h1>
-      <p>Many BI projects start with requests that sound clear but contain hidden ambiguity. CogniCheck helps make assumptions, risks, definitions and implementation choices explicit before development starts.</p>
+      <span data-i18n-document-title="methodReq.title"></span>
+      <p class="eyebrow" data-i18n="methodReq.eyebrow">Requirements to Blueprint</p>
+      <h1 data-i18n="methodReq.heading">From vague dashboard request to structured BI blueprint.</h1>
+      <p data-i18n="methodReq.intro">Many BI projects start with requests that sound clear but contain hidden ambiguity. CogniCheck helps make assumptions, risks, definitions and implementation choices explicit before development starts.</p>
     </header>
 
     <section class="method-step-grid">
       <article class="step-card">
         <span>1</span>
-        <h2>Understand the request</h2>
+        <h2 data-i18n="methodReq.step1.title">Understand the request</h2>
         <ul>
-          <li>What is being asked?</li>
-          <li>Who is the report for?</li>
-          <li>What business question is behind the request?</li>
+          <li data-i18n="methodReq.step1.1">What is being asked?</li>
+          <li data-i18n="methodReq.step1.2">Who is the report for?</li>
+          <li data-i18n="methodReq.step1.3">What business question is behind the request?</li>
         </ul>
       </article>
 
       <article class="step-card">
         <span>2</span>
-        <h2>Identify assumptions</h2>
+        <h2 data-i18n="methodReq.step2.title">Identify assumptions</h2>
         <ul>
-          <li>What is being taken for granted?</li>
-          <li>Are definitions, data sources and responsibilities clear?</li>
-          <li>What does the stakeholder think is obvious?</li>
+          <li data-i18n="methodReq.step2.1">What is being taken for granted?</li>
+          <li data-i18n="methodReq.step2.2">Are definitions, data sources and responsibilities clear?</li>
+          <li data-i18n="methodReq.step2.3">What does the stakeholder think is obvious?</li>
         </ul>
       </article>
 
       <article class="step-card">
         <span>3</span>
-        <h2>Clarify decision context</h2>
+        <h2 data-i18n="methodReq.step3.title">Clarify decision context</h2>
         <ul>
-          <li>What decision should this BI solution support?</li>
-          <li>What action should become easier?</li>
-          <li>What uncertainty should be reduced?</li>
+          <li data-i18n="methodReq.step3.1">What decision should this BI solution support?</li>
+          <li data-i18n="methodReq.step3.2">What action should become easier?</li>
+          <li data-i18n="methodReq.step3.3">What uncertainty should be reduced?</li>
         </ul>
       </article>
 
       <article class="step-card">
         <span>4</span>
-        <h2>Translate to BI blueprint</h2>
+        <h2 data-i18n="methodReq.step4.title">Translate to BI blueprint</h2>
         <ul>
-          <li>Key metrics</li>
-          <li>Data sources</li>
-          <li>Dimensions and filters</li>
-          <li>Security requirements</li>
-          <li>Performance considerations</li>
-          <li>Risks and open questions</li>
+          <li data-i18n="methodReq.step4.1">Key metrics</li>
+          <li data-i18n="methodReq.step4.2">Data sources</li>
+          <li data-i18n="methodReq.step4.3">Dimensions and filters</li>
+          <li data-i18n="methodReq.step4.4">Security requirements</li>
+          <li data-i18n="methodReq.step4.5">Performance considerations</li>
+          <li data-i18n="methodReq.step4.6">Risks and open questions</li>
         </ul>
       </article>
 
       <article class="step-card">
         <span>5</span>
-        <h2>Use the blueprint as conversation tool</h2>
+        <h2 data-i18n="methodReq.step5.title">Use the blueprint as conversation tool</h2>
         <ul>
-          <li>The blueprint is not the final truth.</li>
-          <li>It is a structured starting point for stakeholder alignment.</li>
+          <li data-i18n="methodReq.step5.1">The blueprint is not the final truth.</li>
+          <li data-i18n="methodReq.step5.2">It is a structured starting point for stakeholder alignment.</li>
         </ul>
       </article>
     </section>
 
     <section class="methodology-card">
-      <h2>Good BI starts before the report is built.</h2>
-      <p>CogniCheck treats requirements as the beginning of a dialogue. The goal is not only to document what someone asked for, but to uncover what the BI solution must help them understand or decide.</p>
-      <a class="button" href="/requirements-page.html">Try Requirements to Blueprint</a>
-      <p class="methodology-note">This tool page is protected, so unauthenticated users may be redirected to login.</p>
+      <h2 data-i18n="methodReq.card.title">Good BI starts before the report is built.</h2>
+      <p data-i18n="methodReq.card.body">CogniCheck treats requirements as the beginning of a dialogue. The goal is not only to document what someone asked for, but to uncover what the BI solution must help them understand or decide.</p>
+      <a class="button" href="/requirements-page.html" data-i18n="methodReq.cta">Try Requirements to Blueprint</a>
+      <p class="methodology-note" data-i18n="methodReq.note">This tool page is protected, so unauthenticated users may be redirected to login.</p>
     </section>
   </main>
 </body>

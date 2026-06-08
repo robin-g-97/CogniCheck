@@ -1,7 +1,11 @@
 {
   "hero": {
     "eyebrow": "CogniCheck",
-    "title": "Better BI starts with better decision support.",
+    "title": "Better dashboards. Better decisions.",
+    "titleLines": [
+      "Better dashboards.",
+      "Better decisions."
+    ],
     "subtitle": "Workshop + tool access for BI teams that want clearer dashboards, sharper requirements and lower cognitive load.",
     "body": [
       "CogniCheck helps BI teams, controllers and dashboard developers evaluate whether reports actually help people understand complexity and make decisions."
@@ -61,11 +65,11 @@
         "CogniCheck is designed as a guided engagement, not just a tool login. The website, workshop and demo tools work together."
       ],
       "steps": [
-        "Book a short intake",
-        "Share dashboard or requirements context",
-        "Run a focused BI decision-support workshop",
-        "Use CogniCheck tools during the session",
-        "Receive concrete improvement directions"
+        "Book an intake",
+        "Share the context",
+        "Analyze with tools",
+        "Discuss insights",
+        "Improve your dashboard"
       ]
     },
     {

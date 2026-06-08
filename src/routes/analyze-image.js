@@ -70,7 +70,7 @@ router.post("/analyze", async (req, res) => {
       success: true
     });
 
-    res.json(data);
+    res.json({ ...data, requestId });
   } catch (error) {
     await trackAnalysisEvent({
       requestId,
@@ -168,7 +168,7 @@ router.post("/api/analyze-report", async (req, res) => {
     });
 
     await trackAnalysisEvent({ requestId, userEmail, mode, selectedLanguage, success: true });
-    res.json(data);
+    res.json({ ...data, requestId });
   } catch (error) {
     await trackAnalysisEvent({
       requestId,

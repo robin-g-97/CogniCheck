@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +13,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <title>CogniCheck Methodology | BI requirements and dashboard cognition</title>
   <link rel="stylesheet" href="/css/style.css?v=4">
+  <script src="/js/shared/i18n.js" defer></script>
   <script src="/js/shared/nav.js?v=4" defer></script>
 </head>
 <body>
@@ -20,32 +21,33 @@
 
   <main class="methodology-page">
     <header class="methodology-hero">
-      <p class="eyebrow">CogniCheck Methodology</p>
-      <h1>Data understanding starts with understanding people.</h1>
-      <p class="subtitle">CogniCheck combines BI requirements thinking, cognitive psychology and decision-support logic.</p>
-      <p>CogniCheck is built around a simple idea: good BI is not only about showing data. It is about helping people understand complexity, align expectations and make better decisions.</p>
+      <span data-i18n-document-title="methodology.title"></span>
+      <p class="eyebrow" data-i18n="methodology.eyebrow">CogniCheck Methodology</p>
+      <h1 data-i18n="methodology.heading">Data understanding starts with understanding people.</h1>
+      <p class="subtitle" data-i18n="methodology.subtitle">CogniCheck combines BI requirements thinking, cognitive psychology and decision-support logic.</p>
+      <p data-i18n="methodology.body">CogniCheck is built around a simple idea: good BI is not only about showing data. It is about helping people understand complexity, align expectations and make better decisions.</p>
     </header>
 
     <section class="demo-card-grid">
       <article class="demo-card">
-        <h2>Requirements to Blueprint</h2>
-        <p>Move from vague dashboard requests to structured requirements, assumptions, risks and implementation direction.</p>
-        <a class="button" href="/methodology-requirements.html">View requirements methodology</a>
+        <h2 data-i18n="methodology.req.title">Requirements to Blueprint</h2>
+        <p data-i18n="methodology.req.body">Move from vague dashboard requests to structured requirements, assumptions, risks and implementation direction.</p>
+        <a class="button" href="/methodology-requirements.html" data-i18n="methodology.req.cta">View requirements methodology</a>
       </article>
 
       <article class="demo-card">
-        <h2>Report Analysis</h2>
-        <p>Evaluate whether a report is cognitively clear and aligned with the decision it should support.</p>
-        <a class="button" href="/methodology-analysis.html">View analysis methodology</a>
+        <h2 data-i18n="methodology.analysis.title">Report Analysis</h2>
+        <p data-i18n="methodology.analysis.body">Evaluate whether a report is cognitively clear and aligned with the decision it should support.</p>
+        <a class="button" href="/methodology-analysis.html" data-i18n="methodology.analysis.cta">View analysis methodology</a>
       </article>
     </section>
 
     <section class="methodology-card">
-      <h2>The core CogniCheck question</h2>
-      <p>Does this BI solution help the intended user make the intended decision?</p>
+      <h2 data-i18n="methodology.core.title">The core CogniCheck question</h2>
+      <p data-i18n="methodology.core.body">Does this BI solution help the intended user make the intended decision?</p>
       <div class="cta-row">
-        <a class="button" href="/demo.html">Try the demo</a>
-        <a class="button secondary" href="/#contact">Contact</a>
+        <a class="button" href="/demo.html" data-i18n="methodology.tryDemo">Try the demo</a>
+        <a class="button secondary" href="/#contact" data-i18n="nav.contact">Contact</a>
       </div>
     </section>
   </main>

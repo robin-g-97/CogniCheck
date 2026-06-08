@@ -302,7 +302,16 @@ function appendSectionText(parent, sectionContent, headingTag) {
     }));
   }
 
-  if (sectionContent.title) {
+  if (sectionContent.titleLines) {
+    const heading = createElement(headingTag);
+    sectionContent.titleLines.forEach(line => {
+      heading.appendChild(createElement("span", {
+        className: "hero-title-line",
+        text: line
+      }));
+    });
+    parent.appendChild(heading);
+  } else if (sectionContent.title) {
     parent.appendChild(createElement(headingTag, { text: sectionContent.title }));
   }
 
@@ -384,7 +393,12 @@ function createSection(sectionContent, extraClass = "") {
 
 async function renderHomepage() {
   try {
-    const response = await fetch("/content/homepage.json");
+    homepageRoot.innerHTML = "";
+    const languageCode = window.CogniCheckI18n?.languageCode() || "nl";
+    const contentPath = languageCode === "nl"
+      ? "/content/homepage.nl.json"
+      : "/content/homepage.json";
+    const response = await fetch(contentPath);
     const content = await response.json();
 
     homepageRoot.appendChild(createHero(content.hero));
@@ -401,4 +415,5 @@ async function renderHomepage() {
 
 if (homepageRoot) {
   renderHomepage();
+  window.addEventListener("cognicheck:languagechange", renderHomepage);
 }

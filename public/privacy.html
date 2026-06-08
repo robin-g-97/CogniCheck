@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,6 +11,7 @@
   <meta property="og:url" content="https://www.cognicheck.tech/privacy.html">
   <title>Privacy and Data Handling | CogniCheck</title>
   <link rel="stylesheet" href="/css/style.css?v=4">
+  <script src="/js/shared/i18n.js" defer></script>
   <script src="/js/shared/nav.js?v=4" defer></script>
 </head>
 <body>
@@ -18,47 +19,48 @@
 
   <main class="methodology-page">
     <header class="methodology-hero">
-      <p class="eyebrow">Privacy</p>
-      <h1>Privacy and data handling</h1>
-      <p>CogniCheck is used with dashboard screenshots, requirements and business context. These inputs can be sensitive, so the workflow should be handled deliberately.</p>
+      <span data-i18n-document-title="privacy.title"></span>
+      <p class="eyebrow" data-i18n="privacy.eyebrow">Privacy</p>
+      <h1 data-i18n="privacy.heading">Privacy and data handling</h1>
+      <p data-i18n="privacy.intro">CogniCheck is used with dashboard screenshots, requirements and business context. These inputs can be sensitive, so the workflow should be handled deliberately.</p>
     </header>
 
     <section class="method-step-grid">
       <article class="step-card">
         <span>1</span>
-        <h2>What may be uploaded</h2>
-        <p>Users may upload dashboard screenshots, requirements notes and supporting context documents for analysis.</p>
+        <h2 data-i18n="privacy.upload.title">What may be uploaded</h2>
+        <p data-i18n="privacy.upload.body">Users may upload dashboard screenshots, requirements notes and supporting context documents for analysis.</p>
       </article>
 
       <article class="step-card">
         <span>2</span>
-        <h2>How AI is used</h2>
-        <p>Uploaded content is sent to the configured AI provider to generate structured context, BI blueprints and concise CogniCheck analyses.</p>
+        <h2 data-i18n="privacy.ai.title">How AI is used</h2>
+        <p data-i18n="privacy.ai.body">Uploaded content is sent to the configured AI provider to generate structured context, BI blueprints and concise CogniCheck analyses.</p>
       </article>
 
       <article class="step-card">
         <span>3</span>
-        <h2>Analytics, inputs and outputs</h2>
-        <p>If database analytics are enabled, CogniCheck may store page views, analysis counts, login email addresses, submitted analysis inputs and generated LLM outputs for product improvement and usage-pattern review.</p>
+        <h2 data-i18n="privacy.analytics.title">Analytics, inputs and outputs</h2>
+        <p data-i18n="privacy.analytics.body">If database analytics are enabled, CogniCheck may store page views, analysis counts, login email addresses, submitted analysis inputs and generated LLM outputs for product improvement and usage-pattern review.</p>
       </article>
 
       <article class="step-card">
         <span>4</span>
-        <h2>Confidentiality</h2>
-        <p>For workshops or pilots, sensitive dashboards and requirements should be shared only when appropriate for the organization.</p>
+        <h2 data-i18n="privacy.confidentiality.title">Confidentiality</h2>
+        <p data-i18n="privacy.confidentiality.body">For workshops or pilots, sensitive dashboards and requirements should be shared only when appropriate for the organization.</p>
       </article>
 
       <article class="step-card">
         <span>5</span>
-        <h2>Deletion requests</h2>
-        <p>For questions or deletion requests, contact Robin at robin@cognicheck.tech.</p>
+        <h2 data-i18n="privacy.deletion.title">Deletion requests</h2>
+        <p data-i18n="privacy.deletion.body">For questions or deletion requests, contact Robin at robin@cognicheck.tech.</p>
       </article>
     </section>
 
     <section class="methodology-card">
-      <h2>Practical recommendation</h2>
-      <p>For early pilots, use anonymized or representative dashboards where possible. For sensitive production reports, agree on scope and handling before the workshop starts.</p>
-      <a class="button" href="/#contact">Ask a privacy question</a>
+      <h2 data-i18n="privacy.recommendation.title">Practical recommendation</h2>
+      <p data-i18n="privacy.recommendation.body">For early pilots, use anonymized or representative dashboards where possible. For sensitive production reports, agree on scope and handling before the workshop starts.</p>
+      <a class="button" href="/#contact" data-i18n="privacy.cta">Ask a privacy question</a>
     </section>
   </main>
 </body>

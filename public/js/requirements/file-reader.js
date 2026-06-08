@@ -20,7 +20,7 @@ async function openRequirements(event) {
     const result = await mammoth.extractRawText({ arrayBuffer });
     text = result.value;
   } else {
-    alert("Please upload a .txt or .docx file.");
+    alert(window.CogniCheckI18n?.t("requirements.invalidFile", "Please upload a .txt or .docx file.") || "Please upload a .txt or .docx file.");
     return;
   }
 

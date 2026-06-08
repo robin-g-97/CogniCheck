@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>CogniCheck Demo</title>
   <link rel="stylesheet" href="/css/style.css?v=4">
+  <script src="/js/shared/i18n.js" defer></script>
   <script src="/js/shared/nav.js?v=4" defer></script>
 </head>
 <body>
@@ -13,38 +14,39 @@
 
   <main class="methodology-page demo-home-page">
     <header class="methodology-hero">
-      <p class="eyebrow">CogniCheck Demo</p>
-      <h1>Welcome to the CogniCheck demo</h1>
-      <p>Choose where you want to start. CogniCheck currently supports report analysis and requirements-to-blueprint generation, both based on a decision-support methodology.</p>
+      <span data-i18n-document-title="demo.title"></span>
+      <p class="eyebrow" data-i18n="demo.eyebrow">CogniCheck Demo</p>
+      <h1 data-i18n="demo.heading">Welcome to the CogniCheck demo</h1>
+      <p data-i18n="demo.intro">Choose where you want to start. CogniCheck currently supports report analysis and requirements-to-blueprint generation, both based on a decision-support methodology.</p>
     </header>
 
     <section class="demo-card-grid">
       <article class="demo-card">
-        <h2>Analyze a BI report</h2>
-        <p>Upload a dashboard screenshot, add context, review structured fields and receive a concise CogniCheck analysis focused on cognitive load and decision alignment.</p>
-        <a class="button" href="/Analysis.html">Start report analysis</a>
+        <h2 data-i18n="demo.card.analysis.title">Analyze a BI report</h2>
+        <p data-i18n="demo.card.analysis.body">Upload a dashboard screenshot, add context, review structured fields and receive a concise CogniCheck analysis focused on cognitive load and decision alignment.</p>
+        <a class="button" href="/Analysis.html" data-i18n="demo.card.analysis.cta">Start report analysis</a>
       </article>
 
       <article class="demo-card">
-        <h2>Turn requirements into a BI blueprint</h2>
-        <p>Paste or upload dashboard requirements and receive a structured blueprint with key requirements, assumptions, risks and implementation direction.</p>
-        <a class="button" href="/requirements-page.html">Start blueprint</a>
+        <h2 data-i18n="demo.card.blueprint.title">Turn requirements into a BI blueprint</h2>
+        <p data-i18n="demo.card.blueprint.body">Paste or upload dashboard requirements and receive a structured blueprint with key requirements, assumptions, risks and implementation direction.</p>
+        <a class="button" href="/requirements-page.html" data-i18n="demo.card.blueprint.cta">Start blueprint</a>
       </article>
 
       <article class="demo-card">
-        <h2>Explore the CogniCheck method</h2>
-        <p>Learn how CogniCheck uses cognitive psychology, requirements thinking and decision-support logic to evaluate BI work.</p>
-        <a class="button" href="/methodology.html">View methodology</a>
+        <h2 data-i18n="demo.card.method.title">Explore the CogniCheck method</h2>
+        <p data-i18n="demo.card.method.body">Learn how CogniCheck uses cognitive psychology, requirements thinking and decision-support logic to evaluate BI work.</p>
+        <a class="button" href="/methodology.html" data-i18n="demo.card.method.cta">View methodology</a>
       </article>
     </section>
 
     <section class="methodology-card">
-      <h2>Recommended demo flow</h2>
+      <h2 data-i18n="demo.flow.title">Recommended demo flow</h2>
       <ol class="recommended-flow">
-        <li>Read the methodology</li>
-        <li>Try Requirements to Blueprint</li>
-        <li>Try Report Analysis with context</li>
-        <li>Compare the recommendations with your own BI design judgment</li>
+        <li data-i18n="demo.flow.1">Read the methodology</li>
+        <li data-i18n="demo.flow.2">Try Requirements to Blueprint</li>
+        <li data-i18n="demo.flow.3">Try Report Analysis with context</li>
+        <li data-i18n="demo.flow.4">Compare the recommendations with your own BI design judgment</li>
       </ol>
     </section>
   </main>

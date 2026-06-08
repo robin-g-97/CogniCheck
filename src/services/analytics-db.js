@@ -81,10 +81,37 @@ async function ensureAnalyticsTables() {
         output text not null
       );
 
+      create table if not exists analysis_feedback (
+        id bigserial primary key,
+        created_at timestamptz not null default now(),
+        analysis_event_id text,
+        user_email text,
+        workflow text,
+        selected_language text,
+        cognitive_load_score integer,
+        decision_alignment_score integer,
+        overall_score integer,
+        usefulness_rating integer,
+        cognitive_load_score_feedback text,
+        decision_alignment_score_feedback text,
+        overall_score_feedback text,
+        main_issue_feedback text,
+        main_issue_comment text,
+        recommendation_actionability text,
+        recommendation_comment text,
+        context_match text,
+        context_comment text,
+        real_workflow_use text,
+        workflow_comment text,
+        free_text_feedback text
+      );
+
       alter table analysis_events add column if not exists request_id text;
       alter table analysis_events add column if not exists user_email text;
       alter table llm_outputs add column if not exists request_id text;
       alter table llm_outputs add column if not exists user_email text;
+      alter table analysis_feedback add column if not exists user_email text;
+      alter table analysis_feedback add column if not exists workflow text;
 
       create index if not exists page_views_created_at_idx on page_views (created_at desc);
       create index if not exists analysis_events_created_at_idx on analysis_events (created_at desc);
@@ -96,6 +123,8 @@ async function ensureAnalyticsTables() {
       create index if not exists llm_outputs_created_at_idx on llm_outputs (created_at desc);
       create index if not exists llm_outputs_request_id_idx on llm_outputs (request_id);
       create index if not exists llm_outputs_user_email_idx on llm_outputs (user_email);
+      create index if not exists analysis_feedback_created_at_idx on analysis_feedback (created_at desc);
+      create index if not exists analysis_feedback_event_idx on analysis_feedback (analysis_event_id);
     `)
       .then(() => {
         initialized = true;
@@ -123,7 +152,7 @@ async function trackPageView(req) {
 
   const sessionSource = req.headers.cookie || `${req.ip || ""}:${req.headers["user-agent"] || ""}`;
 
-  await safeQuery(
+  await query(
     `insert into page_views (path, session_hash, referrer, user_agent)
      values ($1, $2, $3, $4)`,
     [
@@ -163,6 +192,65 @@ async function trackLlmOutput({ requestId, userEmail, mode, selectedLanguage, ou
      values ($1, $2, $3, $4, $5)`,
     [requestId || "", userEmail || "", mode, selectedLanguage || "", output]
   );
+}
+
+async function storeAnalysisFeedback(feedback = {}) {
+  if (!pool) {
+    console.warn("Feedback storage unavailable: DATABASE_URL is not configured.");
+    return { stored: false };
+  }
+
+  await safeQuery(
+    `insert into analysis_feedback (
+      analysis_event_id,
+      user_email,
+      workflow,
+      selected_language,
+      cognitive_load_score,
+      decision_alignment_score,
+      overall_score,
+      usefulness_rating,
+      cognitive_load_score_feedback,
+      decision_alignment_score_feedback,
+      overall_score_feedback,
+      main_issue_feedback,
+      main_issue_comment,
+      recommendation_actionability,
+      recommendation_comment,
+      context_match,
+      context_comment,
+      real_workflow_use,
+      workflow_comment,
+      free_text_feedback
+    ) values (
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+      $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
+    )`,
+    [
+      feedback.analysisEventId || null,
+      feedback.userEmail || "",
+      feedback.workflow || "",
+      feedback.selectedLanguage || "",
+      toNullableInteger(feedback.cognitiveLoadScore),
+      toNullableInteger(feedback.decisionAlignmentScore),
+      toNullableInteger(feedback.overallScore),
+      toNullableInteger(feedback.usefulnessRating),
+      feedback.cognitiveLoadScoreFeedback || "",
+      feedback.decisionAlignmentScoreFeedback || "",
+      feedback.overallScoreFeedback || "",
+      feedback.mainIssueFeedback || "",
+      feedback.mainIssueComment || "",
+      feedback.recommendationActionability || "",
+      feedback.recommendationComment || "",
+      feedback.contextMatch || "",
+      feedback.contextComment || "",
+      feedback.realWorkflowUse || "",
+      feedback.workflowComment || "",
+      feedback.freeTextFeedback || ""
+    ]
+  );
+
+  return { stored: true };
 }
 
 async function getAnalyticsSummary() {
@@ -295,10 +383,16 @@ function rowsToCountMap(rows, key) {
   }, {});
 }
 
+function toNullableInteger(value) {
+  const number = Number(value);
+  return Number.isInteger(number) ? number : null;
+}
+
 module.exports = {
   getAnalyticsSummary,
   getStoredInputs,
   getStoredOutputs,
+  storeAnalysisFeedback,
   trackAnalysisEvent,
   trackLlmInput,
   trackLlmOutput,

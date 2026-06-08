@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,8 +10,10 @@
         Mammoth is a browser library that extracts text from .docx files.
         The local scripts below run after the HTML is loaded because they use "defer".
     -->
+    <script src="/js/shared/i18n.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/mammoth/mammoth.browser.min.js" defer></script>
     <script src="/js/shared/api.js" defer></script>
+    <script src="/js/shared/feedback-form.js" defer></script>
     <script src="/js/requirements/file-reader.js" defer></script>
     <script src="/js/requirements/render-blueprint.js" defer></script>
     <script src="/js/requirements/requirements-page.js" defer></script>
@@ -23,90 +25,76 @@
 
     <main class="requirements-page">
         <header class="requirements-hero">
-            <h1>From requirements to blueprint</h1>
-            <p>
-                Upload a stakeholder request, intake note or full requirements document.
-                CogniCheck turns it into a practical blueprint for decisions, KPIs and dashboard design.
-            </p>
+            <span data-i18n-document-title="requirements.pageTitle"></span>
+            <h1 data-i18n="requirements.heading">From requirements to blueprint</h1>
+            <p data-i18n="requirements.hero">Upload a stakeholder request, intake note or full requirements document. CogniCheck turns it into a practical blueprint for decisions, KPIs and dashboard design.</p>
         </header>
 
         <section class="requirements-card">
-            <h2>Clarify the decision before building the dashboard</h2>
-            <p>
-                Dashboard requests often start with broad words like 'strategic', 'overview',
-                'important KPIs' or 'in control'. These words sound clear, but they can hide
-                different assumptions across stakeholders. CogniCheck helps translate the request
-                into concrete decisions, signals, definitions and design implications.
-            </p>
-            <p>
-                Use this flow for a short request, rough meeting notes or a complete requirements document.
-            </p>
+            <h2 data-i18n="requirements.clarifyTitle">Clarify the decision before building the dashboard</h2>
+            <p data-i18n="requirements.clarifyBody1">Dashboard requests often start with broad words like 'strategic', 'overview', 'important KPIs' or 'in control'. These words sound clear, but they can hide different assumptions across stakeholders. CogniCheck helps translate the request into concrete decisions, signals, definitions and design implications.</p>
+            <p data-i18n="requirements.clarifyBody2">Use this flow for a short request, rough meeting notes or a complete requirements document.</p>
         </section>
 
         <section class="requirements-card">
-            <h2>Why Socratic questioning?</h2>
-            <p>
-                Socrates used questions to expose assumptions and sharpen vague ideas.
-                CogniCheck applies that principle to BI requirements: it questions the request so
-                the real decision, uncertainty and action logic become visible before development starts.
-            </p>
-            <p class="requirements-note">
-                The goal is not to criticize the request. The goal is to make it decision-ready.
-            </p>
+            <h2 data-i18n="requirements.socraticTitle">Why Socratic questioning?</h2>
+            <p data-i18n="requirements.socraticBody">Socrates used questions to expose assumptions and sharpen vague ideas. CogniCheck applies that principle to BI requirements: it questions the request so the real decision, uncertainty and action logic become visible before development starts.</p>
+            <p class="requirements-note" data-i18n="requirements.socraticNote">The goal is not to criticize the request. The goal is to make it decision-ready.</p>
         </section>
 
         <section class="requirements-section">
-            <h2>What CogniCheck looks for</h2>
+            <h2 data-i18n="requirements.looksFor">What CogniCheck looks for</h2>
             <div class="requirements-grid">
                 <article class="requirements-card">
-                    <h3>Hidden decisions</h3>
-                    <p>Which decision should the dashboard, analysis or report actually support?</p>
+                    <h3 data-i18n="requirements.hiddenDecisions">Hidden decisions</h3>
+                    <p data-i18n="requirements.hiddenDecisionsBody">Which decision should the dashboard, analysis or report actually support?</p>
                 </article>
                 <article class="requirements-card">
-                    <h3>Unclear concepts</h3>
-                    <p>Which terms sound obvious but still need a shared definition?</p>
+                    <h3 data-i18n="requirements.unclearConcepts">Unclear concepts</h3>
+                    <p data-i18n="requirements.unclearConceptsBody">Which terms sound obvious but still need a shared definition?</p>
                 </article>
                 <article class="requirements-card">
-                    <h3>Missing signals</h3>
-                    <p>Which risks, thresholds, trends or exceptions should trigger attention or action?</p>
+                    <h3 data-i18n="requirements.missingSignals">Missing signals</h3>
+                    <p data-i18n="requirements.missingSignalsBody">Which risks, thresholds, trends or exceptions should trigger attention or action?</p>
                 </article>
             </div>
         </section>
 
         <section class="requirements-card requirements-blueprint">
-            <h2>What the blueprint includes</h2>
+            <h2 data-i18n="requirements.includes">What the blueprint includes</h2>
             <ul class="requirements-checklist">
-                <li>Decision context</li>
-                <li>Core business questions</li>
-                <li>KPI and metric logic</li>
-                <li>Assumptions to validate</li>
-                <li>Suggested dashboard structure</li>
-                <li>Follow-up questions for stakeholders</li>
+                <li data-i18n="requirements.include.1">Decision context</li>
+                <li data-i18n="requirements.include.2">Core business questions</li>
+                <li data-i18n="requirements.include.3">KPI and metric logic</li>
+                <li data-i18n="requirements.include.4">Assumptions to validate</li>
+                <li data-i18n="requirements.include.5">Suggested dashboard structure</li>
+                <li data-i18n="requirements.include.6">Follow-up questions for stakeholders</li>
             </ul>
         </section>
 
         <section class="requirements-card requirements-upload">
-            <h2>Upload your input</h2>
-            <p>
-                Use a stakeholder request, intake note, interview summary, meeting transcript or full
-                requirements document. The richer the input, the sharper the blueprint.
-            </p>
+            <h2 data-i18n="requirements.uploadTitle">Upload your input</h2>
+            <p data-i18n="requirements.uploadBody">Use a stakeholder request, intake note, interview summary, meeting transcript or full requirements document. The richer the input, the sharper the blueprint.</p>
             <input type="file" id="fileInput"
                 accept=".txt,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
                 onchange="openRequirements(event)">
 
+            <label class="requirements-language" for="requirementsLanguage" data-i18n="common.outputLanguage">Output language</label>
+            <select id="requirementsLanguage" onchange="handleRequirementsLanguageChange(event)" data-language-selector>
+                <option value="Dutch" data-i18n="common.dutch">Dutch</option>
+                <option value="English" data-i18n="common.english">English</option>
+            </select>
+
             <div class="requirements-actions">
-                <button id="generateButton" class="button" onclick="analyzeRequirements()">Generate blueprint</button>
-                <p class="requirements-note">
-                    Your first blueprint is a conversation starter. Use it to validate scope,
-                    definitions and priorities with stakeholders.
-                </p>
+                <button id="generateButton" class="button" onclick="analyzeRequirements()" data-i18n="requirements.generate">Generate blueprint</button>
+                <p class="requirements-note" data-i18n="requirements.note">Your first blueprint is a conversation starter. Use it to validate scope, definitions and priorities with stakeholders.</p>
             </div>
 
             <!-- The script shows this block after the blueprint request starts. -->
             <div id="result-container" class="requirements-result">
-                <h3>Generated Blueprint:</h3>
+                <h3 data-i18n="requirements.resultTitle">Generated blueprint</h3>
                 <div id="blueprintOutput"></div>
+                <div id="blueprint-feedback-container"></div>
             </div>
         </section>
     </main>

@@ -2,11 +2,12 @@
 
 let uploadedFiles = [];
 let backgroundContext = "";
-let selectedLanguage = "English";
+let selectedLanguage = window.CogniCheckI18n?.getLanguage() || "Dutch";
 let reportImported = false;
 let extractedDocumentText = "";
 let structuredContext = {};
 let analysisResult = "";
+let latestAnalysisRequestId = "";
 let loadingImport = false;
 let loadingAnalysis = false;
 let importError = "";
@@ -57,6 +58,91 @@ const structuredFieldGroups = [
     ]
   }
 ];
+
+const structuredFieldGroupsDutch = [
+  {
+    title: "Kerncontext van het rapport",
+    fields: [
+      ["reportTitle", "Rapporttitel"],
+      ["reportType", "Rapporttype"],
+      ["businessDomain", "Businessdomein"],
+      ["intendedAudience", "Beoogde doelgroep"],
+      ["userExpertiseLevel", "Expertiseniveau van gebruiker"],
+      ["reportingFrequency", "Rapportagefrequentie"],
+      ["usageContext", "Gebruikscontext"]
+    ]
+  },
+  {
+    title: "Beslissingscontext",
+    fields: [
+      ["mainDecisionSupported", "Belangrijkste ondersteunde beslissing"],
+      ["secondaryDecisionsSupported", "Secundaire ondersteunde beslissingen"],
+      ["requiredActionFromUser", "Vereiste actie van gebruiker"],
+      ["decisionUrgency", "Urgentie van beslissing"],
+      ["decisionComplexity", "Complexiteit van beslissing"],
+      ["whatUserShouldKnow", "Wat moet de gebruiker weten na het bekijken van het rapport?"]
+    ]
+  },
+  {
+    title: "KPI-context",
+    fields: [
+      ["importantKpis", "Belangrijke KPI's"],
+      ["kpiDefinitionsOrNotes", "KPI-definities of notities"],
+      ["targetsThresholdsOrBenchmarks", "Targets, drempels of benchmarks"],
+      ["timePeriodShown", "Getoonde periode"],
+      ["comparisonLogic", "Vergelijkingslogica"]
+    ]
+  },
+  {
+    title: "Cognitieve en business-aandachtspunten",
+    fields: [
+      ["knownConcernsOrRisks", "Bekende aandachtspunten of risico's"],
+      ["possibleUserConfusion", "Mogelijke gebruikersverwarring"],
+      ["missingContext", "Ontbrekende context"],
+      ["assumptionsDetected", "Gedetecteerde aannames"],
+      ["additionalNotes", "Aanvullende notities"]
+    ]
+  }
+];
+
+const pageMessages = {
+  English: {
+    uploadReportFirst: "Please upload a report screenshot first.",
+    supportingFilesReady: count => `${count} supporting file(s) ready. Text was extracted from .txt files; PDF and DOCX files will be sent to the AI as attachments.`,
+    structuredReady: "Structured context is ready. Review the fields on the left, then run the full CogniCheck analysis.",
+    notReport: "This does not appear to be a report. Upload a dashboard or report.",
+    importFailed: "Import failed. Please check the uploaded file and try again.",
+    importReport: "Import report",
+    importing: "Importing report...",
+    analyzeFirst: "Please import the report before running the full analysis.",
+    analyzing: "Analyzing...",
+    analyze: "Perform CogniCheck Analysis",
+    analyzingWait: "Analyzing report, please wait...",
+    analysisFailed: "Analysis failed. Please try again. If this keeps happening, simplify the context or use another screenshot.",
+    invalidJsonEscape: "The AI returned an invalid JSON response. This sometimes happens because of escaped characters. Please try again.",
+    invalidJson: "The AI response could not be read as structured JSON. Please try again.",
+    outputTitle: "Analysis output",
+    noPrintReport: "There is no analysis report to print yet."
+  },
+  Dutch: {
+    uploadReportFirst: "Upload eerst een rapportscreenshot.",
+    supportingFilesReady: count => `${count} ondersteunende bestand(en) klaar. Tekst is uit .txt-bestanden gehaald; PDF- en DOCX-bestanden worden als bijlage naar de AI gestuurd.`,
+    structuredReady: "Gestructureerde context is klaar. Controleer de velden links en voer daarna de volledige CogniCheck-analyse uit.",
+    notReport: "Dit lijkt geen rapport te zijn. Upload een dashboard of rapport.",
+    importFailed: "Importeren mislukt. Controleer het geüploade bestand en probeer het opnieuw.",
+    importReport: "Rapport importeren",
+    importing: "Rapport importeren...",
+    analyzeFirst: "Importeer het rapport voordat je de volledige analyse uitvoert.",
+    analyzing: "Analyseren...",
+    analyze: "CogniCheck-analyse uitvoeren",
+    analyzingWait: "Rapport analyseren, even geduld...",
+    analysisFailed: "Analyse mislukt. Probeer het opnieuw. Als dit blijft gebeuren, vereenvoudig de context of gebruik een andere screenshot.",
+    invalidJsonEscape: "De AI gaf een ongeldige JSON-respons terug. Dit gebeurt soms door escape-tekens. Probeer het opnieuw.",
+    invalidJson: "De AI-respons kon niet als gestructureerde JSON worden gelezen. Probeer het opnieuw.",
+    outputTitle: "Analyse-output",
+    noPrintReport: "Er is nog geen analyserapport om te printen."
+  }
+};
 
 const analysisLabels = {
   English: {
@@ -158,7 +244,7 @@ async function handleSupportingFileUpload(event) {
 
   const summary = document.getElementById("supporting-file-summary");
   summary.innerText = uploadedFiles.length
-    ? `${uploadedFiles.length} supporting file(s) ready. Text was extracted from .txt files; PDF and DOCX files will be sent to the AI as attachments.`
+    ? getPageMessages().supportingFilesReady(uploadedFiles.length)
     : "";
 }
 
@@ -170,13 +256,14 @@ function handleBackgroundContextChange(event) {
 // Keeps the selected output language state in sync with the dropdown.
 function handleLanguageChange(event) {
   selectedLanguage = event.target.value;
+  window.CogniCheckI18n?.setLanguage(selectedLanguage);
 }
 
 // Calls the import/context extraction AI step and shows editable structured fields.
 async function importReport() {
   try {
     if (!uploadedImage) {
-      alert("Please upload a report screenshot first.");
+      alert(getPageMessages().uploadReportFirst);
       return;
     }
 
@@ -187,7 +274,7 @@ async function importReport() {
 
     const isReport = await checkIsReport(uploadedImage.dataUrl);
     if (!isReport) {
-      throw new Error("This does not appear to be a report. Upload a dashboard or report.");
+      throw new Error(getPageMessages().notReport);
     }
 
     const data = await postJson("/api/analyze-report", {
@@ -208,7 +295,7 @@ async function importReport() {
 
     lockBackgroundContext();
     renderStructuredContextFields();
-    setAnalysisInstruction("Structured context is ready. Review the fields on the left, then run the full CogniCheck analysis.");
+    setAnalysisInstruction(getPageMessages().structuredReady);
   } catch (error) {
     console.error("Import failed:", error);
     importError = error.message;
@@ -228,7 +315,7 @@ function updateStructuredContextField(fieldName, value) {
 async function performCogniCheckAnalysis() {
   try {
     if (!reportImported) {
-      alert("Please import the report before running the full analysis.");
+      alert(getPageMessages().analyzeFirst);
       return;
     }
 
@@ -250,6 +337,7 @@ async function performCogniCheckAnalysis() {
       structuredContext
     });
 
+    latestAnalysisRequestId = data.requestId || "";
     analysisResult = safeParseJsonResponse(getGeminiText(data));
     renderAnalysisResult(analysisResult);
   } catch (error) {
@@ -268,7 +356,7 @@ function renderStructuredContextFields() {
   const container = document.getElementById("structured-context-container");
   const fieldsContainer = document.getElementById("structured-context-fields");
 
-  fieldsContainer.innerHTML = structuredFieldGroups.map(group => `
+  fieldsContainer.innerHTML = getStructuredFieldGroups().map(group => `
     <fieldset class="structured-group">
       <legend>${group.title}</legend>
       ${group.fields.map(([fieldName, label]) => `
@@ -303,29 +391,45 @@ function renderAnalysisResult(result) {
       ${renderMissingContext(result.missing_context, labels)}
     </div>
   `;
+
+  renderFeedbackForm({
+    containerId: "analysis-feedback-container",
+    workflow: "analysis",
+    selectedLanguage,
+    analysisEventId: latestAnalysisRequestId,
+    scores: {
+      cognitiveLoadScore: result.cognitive_load?.score ?? null,
+      decisionAlignmentScore: result.decision_alignment?.score ?? null,
+      overallScore: result.executive_verdict?.total_score ?? null
+    }
+  });
 }
 
 function setImportLoadingState() {
   const button = document.getElementById("import-button");
   button.disabled = loadingImport;
-  button.innerText = loadingImport ? "Importing report..." : "Import report";
+  button.innerText = loadingImport ? getPageMessages().importing : getPageMessages().importReport;
 }
 
 function setAnalysisLoadingState() {
   const button = document.getElementById("analyze-button");
   if (button) {
     button.disabled = loadingAnalysis;
-    button.innerText = loadingAnalysis ? "Analyzing..." : "Perform CogniCheck Analysis";
+    button.innerText = loadingAnalysis ? getPageMessages().analyzing : getPageMessages().analyze;
   }
 
   if (loadingAnalysis) {
-    setAnalysisInstruction("Analyzing report, please wait...");
+    setAnalysisInstruction(getPageMessages().analyzingWait);
   }
 }
 
 function setAnalysisInstruction(message) {
   const report = document.getElementById("analysis-report");
-  report.innerHTML = `<h2>Analysis output</h2><p>${escapeHtml(message)}</p>`;
+  const feedbackContainer = document.getElementById("analysis-feedback-container");
+  report.innerHTML = `<h2>${escapeHtml(getPageMessages().outputTitle)}</h2><p>${escapeHtml(message)}</p>`;
+  if (feedbackContainer) {
+    feedbackContainer.innerHTML = "";
+  }
 }
 
 function lockBackgroundContext() {
@@ -376,22 +480,22 @@ function safeParseJsonResponse(text) {
 
 function getJsonParseMessage(error) {
   if (error.message.includes("Bad escaped character in JSON at position")) {
-    return "The AI returned an invalid JSON response. This sometimes happens because of escaped characters. Please try again.";
+    return getPageMessages().invalidJsonEscape;
   }
 
-  return "The AI response could not be read as structured JSON. Please try again.";
+  return getPageMessages().invalidJson;
 }
 
 // TODO: If JSON parsing errors remain common, consider adding a server-side JSON repair step or using stricter schema-based output.
 function getImportErrorMessage(error) {
   if (error.isJsonParseError) return error.message;
-  if (error.message.includes("does not appear to be a report")) return error.message;
-  return "Import failed. Please check the uploaded file and try again.";
+  if (error.message === getPageMessages().notReport || error.message.includes("does not appear to be a report")) return error.message;
+  return getPageMessages().importFailed;
 }
 
 function getAnalysisErrorMessage(error) {
   if (error.isJsonParseError) return error.message;
-  return "Analysis failed. Please try again. If this keeps happening, simplify the context or use another screenshot.";
+  return getPageMessages().analysisFailed;
 }
 
 function renderExecutiveVerdict(verdict = {}, labels = getAnalysisLabels()) {
@@ -494,6 +598,14 @@ function getAnalysisLabels() {
   return analysisLabels[selectedLanguage] || analysisLabels.English;
 }
 
+function getStructuredFieldGroups() {
+  return selectedLanguage === "Dutch" ? structuredFieldGroupsDutch : structuredFieldGroups;
+}
+
+function getPageMessages() {
+  return pageMessages[selectedLanguage] || pageMessages.English;
+}
+
 function getScoreStatus(score, sectionKey, labels) {
   if (!Number.isFinite(score)) {
     return { color: "neutral", label: labels.notScored };
@@ -558,9 +670,25 @@ let analyzeImage = performCogniCheckAnalysis;
 function printAnalysisReport() {
   const report = document.getElementById("analysis-report");
   if (!report || !report.innerText.trim()) {
-    alert("There is no analysis report to print yet.");
+    alert(getPageMessages().noPrintReport);
     return;
   }
 
   window.print();
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  selectedLanguage = window.CogniCheckI18n?.getLanguage() || selectedLanguage;
+  const languageSelect = document.getElementById("selectedLanguage");
+  if (languageSelect) languageSelect.value = selectedLanguage;
+  setImportLoadingState();
+  setAnalysisLoadingState();
+});
+
+window.addEventListener("cognicheck:languagechange", event => {
+  selectedLanguage = event.detail.language;
+  if (reportImported) renderStructuredContextFields();
+  if (analysisResult) renderAnalysisResult(analysisResult);
+  setImportLoadingState();
+  setAnalysisLoadingState();
+});

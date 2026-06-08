@@ -1,4 +1,12 @@
 // Main page flow for the requirements-to-blueprint page.
+let blueprintSelectedLanguage = window.CogniCheckI18n?.getLanguage() || "Dutch";
+let latestBlueprintRequestId = "";
+
+function handleRequirementsLanguageChange(event) {
+  blueprintSelectedLanguage = event.target.value;
+  window.CogniCheckI18n?.setLanguage(blueprintSelectedLanguage);
+}
+
 // This function is called by the "Generate Blueprint" button.
 async function analyzeRequirements() {
   // requirements is filled by openRequirements(...) in file-reader.js.
@@ -13,14 +21,30 @@ async function analyzeRequirements() {
 
   // Show a loading state while the backend/Gemini request is running.
   container.style.display = "block";
-  blueprintOutput.innerText = "Generating response...";
+  blueprintOutput.innerText = window.CogniCheckI18n?.t("requirements.generating", "Generating response...") || "Generating response...";
+  document.getElementById("blueprint-feedback-container").innerHTML = "";
 
   // Send the extracted requirements text to the Express backend.
   // The backend adds the prompt and calls Gemini.
   const data = await postJson("/api/analyze-requirements", {
-    text: requirements
+    text: requirements,
+    selectedLanguage: blueprintSelectedLanguage
   });
 
   // Render the HTML returned by Gemini into the page.
-  renderBlueprintOutput(data.message);
+  latestBlueprintRequestId = data.requestId || "";
+  renderBlueprintOutput(data.message, {
+    selectedLanguage: blueprintSelectedLanguage,
+    analysisEventId: latestBlueprintRequestId
+  });
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  blueprintSelectedLanguage = window.CogniCheckI18n?.getLanguage() || blueprintSelectedLanguage;
+  const selector = document.getElementById("requirementsLanguage");
+  if (selector) selector.value = blueprintSelectedLanguage;
+});
+
+window.addEventListener("cognicheck:languagechange", event => {
+  blueprintSelectedLanguage = event.detail.language;
+});

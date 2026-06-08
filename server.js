@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const path = require("path");
 
 const analyticsRoutes = require("./src/routes/analytics");
+const analysisFeedbackRoutes = require("./src/routes/analysis-feedback");
 const analyzeImageRoutes = require("./src/routes/analyze-image");
 const analyzeRequirementsRoutes = require("./src/routes/analyze-requirements");
 const contactRoutes = require("./src/routes/contact");
@@ -394,6 +395,7 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(analyticsRoutes);
+app.use(analysisFeedbackRoutes);
 app.use(analyzeImageRoutes);
 app.use(analyzeRequirementsRoutes);
 

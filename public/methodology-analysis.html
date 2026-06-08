@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +13,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <title>Report Analysis Methodology | CogniCheck</title>
   <link rel="stylesheet" href="/css/style.css?v=4">
+  <script src="/js/shared/i18n.js" defer></script>
   <script src="/js/shared/nav.js?v=4" defer></script>
 </head>
 <body>
@@ -20,74 +21,75 @@
 
   <main class="methodology-page">
     <header class="methodology-hero">
-      <p class="eyebrow">Report Analysis</p>
-      <h1>Does this report help the user make the intended decision?</h1>
-      <p>A dashboard can look professional and still fail as decision support. CogniCheck evaluates reports through cognitive psychology, visual perception and BI consulting principles.</p>
+      <span data-i18n-document-title="methodAnalysis.title"></span>
+      <p class="eyebrow" data-i18n="methodAnalysis.eyebrow">Report Analysis</p>
+      <h1 data-i18n="methodAnalysis.heading">Does this report help the user make the intended decision?</h1>
+      <p data-i18n="methodAnalysis.intro">A dashboard can look professional and still fail as decision support. CogniCheck evaluates reports through cognitive psychology, visual perception and BI consulting principles.</p>
     </header>
 
     <section class="method-step-grid">
       <article class="step-card">
         <span>1</span>
-        <h2>Context first</h2>
+        <h2 data-i18n="methodAnalysis.step1.title">Context first</h2>
         <ul>
-          <li>Who uses the report?</li>
-          <li>What decision should it support?</li>
-          <li>How often is it used?</li>
-          <li>What business context matters?</li>
+          <li data-i18n="methodAnalysis.step1.1">Who uses the report?</li>
+          <li data-i18n="methodAnalysis.step1.2">What decision should it support?</li>
+          <li data-i18n="methodAnalysis.step1.3">How often is it used?</li>
+          <li data-i18n="methodAnalysis.step1.4">What business context matters?</li>
         </ul>
       </article>
 
       <article class="step-card">
         <span>2</span>
-        <h2>Cognitive load</h2>
+        <h2 data-i18n="methodAnalysis.step2.title">Cognitive load</h2>
         <ul>
-          <li>How much unnecessary mental effort does the report create?</li>
-          <li>Are there too many competing signals?</li>
-          <li>Does the user need to mentally reconstruct meaning?</li>
+          <li data-i18n="methodAnalysis.step2.1">How much unnecessary mental effort does the report create?</li>
+          <li data-i18n="methodAnalysis.step2.2">Are there too many competing signals?</li>
+          <li data-i18n="methodAnalysis.step2.3">Does the user need to mentally reconstruct meaning?</li>
         </ul>
       </article>
 
       <article class="step-card">
         <span>3</span>
-        <h2>Psychological lens</h2>
-        <p>Use only the most relevant concepts for each report:</p>
+        <h2 data-i18n="methodAnalysis.step3.title">Psychological lens</h2>
+        <p data-i18n="methodAnalysis.step3.body">Use only the most relevant concepts for each report:</p>
         <ul>
-          <li>Attention</li>
-          <li>Gestalt grouping</li>
-          <li>Working memory</li>
-          <li>Cognitive load</li>
-          <li>Change visibility</li>
-          <li>Mental reconstruction</li>
+          <li data-i18n="methodAnalysis.step3.1">Attention</li>
+          <li data-i18n="methodAnalysis.step3.2">Gestalt grouping</li>
+          <li data-i18n="methodAnalysis.step3.3">Working memory</li>
+          <li data-i18n="methodAnalysis.step3.4">Cognitive load</li>
+          <li data-i18n="methodAnalysis.step3.5">Change visibility</li>
+          <li data-i18n="methodAnalysis.step3.6">Mental reconstruction</li>
         </ul>
       </article>
 
       <article class="step-card">
         <span>4</span>
-        <h2>Decision alignment</h2>
+        <h2 data-i18n="methodAnalysis.step4.title">Decision alignment</h2>
         <ul>
-          <li>Is the relevant information present?</li>
-          <li>Is the decision logic visible?</li>
-          <li>Can the user see whether action is needed?</li>
-          <li>Does the report move from data to decision?</li>
+          <li data-i18n="methodAnalysis.step4.1">Is the relevant information present?</li>
+          <li data-i18n="methodAnalysis.step4.2">Is the decision logic visible?</li>
+          <li data-i18n="methodAnalysis.step4.3">Can the user see whether action is needed?</li>
+          <li data-i18n="methodAnalysis.step4.4">Does the report move from data to decision?</li>
         </ul>
       </article>
 
       <article class="step-card">
         <span>5</span>
-        <h2>Practical recommendations</h2>
+        <h2 data-i18n="methodAnalysis.step5.title">Practical recommendations</h2>
         <ul>
-          <li>What should change?</li>
-          <li>Why does it matter?</li>
-          <li>What is the highest-leverage improvement?</li>
+          <li data-i18n="methodAnalysis.step5.1">What should change?</li>
+          <li data-i18n="methodAnalysis.step5.2">Why does it matter?</li>
+          <li data-i18n="methodAnalysis.step5.3">What is the highest-leverage improvement?</li>
         </ul>
       </article>
     </section>
 
     <section class="methodology-card">
-      <h2>Visual polish is not the same as decision readiness.</h2>
-      <p>CogniCheck distinguishes between information relevance and decision readiness. A report can contain useful information but still require too much interpretation before it supports action.</p>
-      <a class="button" href="/Analysis.html">Try Report Analysis</a>
-      <p class="methodology-note">This tool page is protected, so unauthenticated users may be redirected to login.</p>
+      <h2 data-i18n="methodAnalysis.card.title">Visual polish is not the same as decision readiness.</h2>
+      <p data-i18n="methodAnalysis.card.body">CogniCheck distinguishes between information relevance and decision readiness. A report can contain useful information but still require too much interpretation before it supports action.</p>
+      <a class="button" href="/Analysis.html" data-i18n="methodAnalysis.cta">Try Report Analysis</a>
+      <p class="methodology-note" data-i18n="methodAnalysis.note">This tool page is protected, so unauthenticated users may be redirected to login.</p>
     </section>
   </main>
 </body>

@@ -1,0 +1,195 @@
+{
+  "hero": {
+    "eyebrow": "CogniCheck",
+    "title": "Betere dashboards. Betere beslissingen.",
+    "titleLines": [
+      "Betere dashboards.",
+      "Betere beslissingen."
+    ],
+    "subtitle": "Workshop + tooltoegang voor BI-teams die duidelijkere dashboards, scherpere requirements en lagere cognitieve belasting willen.",
+    "body": [
+      "CogniCheck helpt BI-teams, controllers en dashboardontwikkelaars beoordelen of rapporten mensen echt helpen om complexiteit te begrijpen en beslissingen te nemen."
+    ],
+    "actions": [
+      {
+        "label": "Plan een intake",
+        "href": "#contact",
+        "variant": "primary"
+      },
+      {
+        "label": "Naar CogniCheck",
+        "href": "#access",
+        "variant": "secondary"
+      },
+      {
+        "label": "Bekijk workshop",
+        "href": "/workshop.html",
+        "variant": "secondary"
+      }
+    ],
+    "image": {
+      "src": "/analysis-screenshot.png",
+      "alt": "CogniCheck analyse screenshot"
+    }
+  },
+  "sections": [
+    {
+      "id": "features",
+      "title": "Wat CogniCheck teams helpt verbeteren",
+      "body": [
+        "De workshop combineert BI-consulting, cognitieve psychologie en praktische tooltoegang, zodat teams zowel requirements als bestaande rapporten kunnen verbeteren."
+      ],
+      "cards": [
+        {
+          "title": "Scherpere dashboardrequirements",
+          "body": "Ga van brede stakeholderverzoeken naar duidelijkere beslissingen, aannames, KPI-definities en implementatierichting."
+        },
+        {
+          "title": "Cognitieve rapportreview",
+          "body": "Evalueer waar een dashboard onnodige mentale inspanning, zwakke hierarchie of verborgen interpretatiewerk creert."
+        },
+        {
+          "title": "Diagnose van beslissingsondersteuning",
+          "body": "Controleer of het rapport de bedoelde gebruiker helpt zien wat ertoe doet, correct te vergelijken en te weten wanneer actie nodig is."
+        },
+        {
+          "title": "Concreet verbeterplan",
+          "body": "Ga weg met geprioriteerde verbeteringen die dashboardkeuzes verbinden aan cognitie en kwaliteit van besluitvorming."
+        }
+      ]
+    },
+    {
+      "id": "journey",
+      "title": "De workshopreis",
+      "body": [
+        "CogniCheck is ontworpen als begeleide aanpak, niet alleen als tool-login. Website, workshop en demotools werken samen."
+      ],
+      "steps": [
+        "Plan een intake",
+        "Deel je context",
+        "Analyseer met tools",
+        "Bespreek inzichten",
+        "Verbeter je dashboard"
+      ]
+    },
+    {
+      "id": "deliverables",
+      "title": "Wat teams ontvangen",
+      "body": [
+        "Het doel is een praktische output die besproken kan worden met BI-ontwikkelaars, stakeholders en business owners."
+      ],
+      "cards": [
+        {
+          "title": "Dashboardreview",
+          "body": "Een compacte CogniCheck-analyse gericht op cognitieve belasting, beslissingsondersteuning en verbeteringen met de meeste impact."
+        },
+        {
+          "title": "BI-blueprint",
+          "body": "Een gestructureerde vertaling van requirements naar beslissingen, metrics, risico's, aannames en implementatierichting."
+        },
+        {
+          "title": "Teamleren",
+          "body": "Een herbruikbare manier om over dashboardkwaliteit na te denken met aandacht, werkgeheugen, groepering en beslissingslogica."
+        }
+      ]
+    },
+    {
+      "id": "workshops",
+      "title": "Workshopvormen",
+      "body": [
+        "CogniCheck kan worden gebruikt als compacte dashboardreviewsessie, teamworkshop of betaalde pilot met tijdelijke tooltoegang."
+      ],
+      "cards": [
+        {
+          "title": "Intro-workshop",
+          "body": "Een gerichte sessie over cognitieve belasting, dashboardinterpretatie en beslissingsklare BI.",
+          "href": "/workshop.html",
+          "label": "Bekijk workshop"
+        },
+        {
+          "title": "Dashboardreviewpakket",
+          "body": "Beoordeel een of meer bestaande dashboards en vertaal bevindingen naar concrete verbeteracties.",
+          "href": "/workshop.html",
+          "label": "Bekijk deliverables"
+        },
+        {
+          "title": "Pilottoegang",
+          "body": "Tijdelijke toegang tot CogniCheck-tools zodat een team requirements-naar-blueprint en rapportanalyse kan testen.",
+          "href": "/demo.html",
+          "label": "Vraag toegang aan"
+        }
+      ]
+    },
+    {
+      "id": "access",
+      "title": "Naar CogniCheck",
+      "body": [
+        "Heb je al workshop- of pilottoegang? Vul je e-mailadres in en ontvang een veilige CogniCheck-toegangslink."
+      ],
+      "login": {
+        "label": "E-mailadres",
+        "buttonLabel": "Stuur toegangslink",
+        "sendingLabel": "Link versturen...",
+        "successMessage": "Controleer je e-mail voor de CogniCheck-toegangslink.",
+        "errorMessage": "De toegangslink kon niet worden verstuurd. Probeer het later opnieuw."
+      },
+      "cards": [
+        {
+          "title": "Rapportanalyse",
+          "body": "Upload een dashboardscreenshot en beoordeel cognitieve belasting, beslissingsondersteuning en aanbevelingen.",
+          "href": "/Analysis.html",
+          "label": "Open rapportanalyse"
+        },
+        {
+          "title": "Requirements naar Blueprint",
+          "body": "Zet dashboardrequirements om naar een gestructureerde BI-blueprint met aannames, risico's en vervolgstappen.",
+          "href": "/requirements-page.html",
+          "label": "Open blueprint-tool"
+        }
+      ],
+      "cardStyle": "navigation"
+    },
+    {
+      "id": "about",
+      "title": "Over CogniCheck",
+      "body": [
+        "CogniCheck is gemaakt door Robin Groen, BI-analist met een achtergrond in psychologie, management en data-analyse.",
+        "Het project begon vanuit een eenvoudige overtuiging: goede BI gaat niet alleen over data. Het gaat om mensen helpen complexiteit te begrijpen en betere beslissingen te nemen."
+      ],
+      "image": {
+        "src": "/portrait.png",
+        "alt": "Portret van Robin Groen"
+      },
+      "layout": "media"
+    },
+    {
+      "id": "contact",
+      "title": "Plan een intake of vraag naar een workshop",
+      "body": [
+        "Gebruik het formulier voor workshopverzoeken, dashboardreviewpilots of vragen over het toepassen van CogniCheck met je BI-team."
+      ],
+      "contactForm": {
+        "nameLabel": "Naam",
+        "emailLabel": "E-mail",
+        "organizationLabel": "Organisatie",
+        "interestLabel": "Waar ben je in geinteresseerd?",
+        "interestOptions": [
+          "Workshop",
+          "Dashboardreview",
+          "Pilottoegang",
+          "Requirements naar Blueprint",
+          "Anders"
+        ],
+        "messageLabel": "Bericht",
+        "messagePlaceholder": "Deel kort iets over je team, dashboarduitdaging, workshopidee of pilotverzoek.",
+        "buttonLabel": "Bericht versturen",
+        "sendingLabel": "Versturen...",
+        "successMessage": "Bedankt, je bericht is verstuurd.",
+        "errorMessage": "Het bericht kon niet worden verstuurd. Probeer het later opnieuw.",
+        "directEmailLabel": "Liever e-mail?",
+        "directEmailText": "Mail me direct via",
+        "directEmail": "robin@cognicheck.tech"
+      }
+    }
+  ]
+}

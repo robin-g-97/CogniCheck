@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +9,9 @@
         "defer" means: download the scripts now, but run them after the HTML has been read.
         The order matters because analyze-page.js uses functions/variables from the files above it.
     -->
+    <script src="/js/shared/i18n.js" defer></script>
     <script src="/js/shared/api.js" defer></script>
+    <script src="/js/shared/feedback-form.js" defer></script>
     <script src="/js/analysis/image-upload.js" defer></script>
     <script src="/js/analysis/analyze-page.js" defer></script>
     <script src="/js/shared/nav.js?v=4" defer></script>
@@ -27,13 +29,14 @@
 
 <main class="analysis-page">
     <section class="analysis-column analysis-input">
-        <h1>CogniCheck Analysis</h1>
+        <span data-i18n-document-title="analysis.pageTitle"></span>
+        <h1 data-i18n="analysis.heading">CogniCheck Analysis</h1>
 
         <div class="analysis-section">
-            <label for="fileInput">Upload report screenshot</label>
+            <label for="fileInput" data-i18n="analysis.uploadLabel">Upload report screenshot</label>
             <div id="dropzone" onclick="document.getElementById('fileInput').click()">
-                <p>Upload or drop a screenshot
-                    <small>or click to choose a file</small>
+                <p><span data-i18n="analysis.dropzone">Upload or drop a screenshot</span>
+                    <small data-i18n="analysis.dropzoneSmall">or click to choose a file</small>
                 </p>
                 <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
                 <img id="output" class="analysis-preview" alt="">
@@ -41,35 +44,35 @@
         </div>
 
         <div class="analysis-section">
-            <label for="supportingFilesInput">Upload supporting files</label>
-            <p class="field-help">Optional: upload requirements, notes, KPI definitions or other context documents. TXT files are read directly. PDF and DOCX support is experimental and sent to the AI as attachments. XLSX is not supported yet.</p>
+            <label for="supportingFilesInput" data-i18n="analysis.supportingLabel">Upload supporting files</label>
+            <p class="field-help" data-i18n="analysis.supportingHelp">Optional: upload requirements, notes, KPI definitions or other context documents. TXT files are read directly. PDF and DOCX support is experimental and sent to the AI as attachments. XLSX is not supported yet.</p>
             <input type="file" id="supportingFilesInput" accept=".txt,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple onchange="handleSupportingFileUpload(event)">
             <p id="supporting-file-summary" class="field-help"></p>
         </div>
 
         <div class="analysis-section">
-            <label for="backgroundContext">Background context</label>
+            <label for="backgroundContext" data-i18n="analysis.contextLabel">Background context</label>
             <textarea id="backgroundContext" rows="9" oninput="handleBackgroundContextChange(event)" placeholder="Describe the report, audience, purpose, decisions supported, KPI definitions, known concerns, or anything else that may help CogniCheck understand the report.
 
 Example:
-Monthly finance dashboard for business controllers. Used during monthly management meetings to monitor budget deviations and decide whether corrective action is needed."></textarea>
+Monthly finance dashboard for business controllers. Used during monthly management meetings to monitor budget deviations and decide whether corrective action is needed." data-i18n-placeholder="analysis.contextPlaceholder"></textarea>
         </div>
 
         <div class="analysis-section">
-            <label for="selectedLanguage">Output language</label>
-            <select id="selectedLanguage" onchange="handleLanguageChange(event)">
-                <option value="English" selected>English</option>
-                <option value="Dutch">Dutch</option>
+            <label for="selectedLanguage" data-i18n="common.outputLanguage">Output language</label>
+            <select id="selectedLanguage" onchange="handleLanguageChange(event)" data-language-selector>
+                <option value="Dutch" data-i18n="common.dutch">Dutch</option>
+                <option value="English" data-i18n="common.english">English</option>
             </select>
         </div>
 
-        <button id="import-button" onclick="importReport()" class="button analysis-action-button">Import report</button>
+        <button id="import-button" onclick="importReport()" class="button analysis-action-button" data-i18n="analysis.importButton">Import report</button>
         <p id="import-error" class="analysis-error"></p>
 
         <div id="structured-context-container" class="structured-context" style="display: none;">
-            <p class="structured-note">CogniCheck has drafted structured report context from the screenshot and any information you provided. Please review and correct these fields before running the full analysis.</p>
+            <p class="structured-note" data-i18n="analysis.structuredNote">CogniCheck has drafted structured report context from the screenshot and any information you provided. Please review and correct these fields before running the full analysis.</p>
             <div id="structured-context-fields"></div>
-            <button id="analyze-button" onclick="performCogniCheckAnalysis()" class="button analysis-action-button">Perform CogniCheck Analysis</button>
+            <button id="analyze-button" onclick="performCogniCheckAnalysis()" class="button analysis-action-button" data-i18n="analysis.analyzeButton">Perform CogniCheck Analysis</button>
             <p id="analysis-error" class="analysis-error"></p>
         </div>
     </section>
@@ -77,10 +80,11 @@ Monthly finance dashboard for business controllers. Used during monthly manageme
     <section class="analysis-column analysis-output">
         <div id="result-container">
             <div id="analysis-report">
-                <h2>Analysis output</h2>
-                <p>Upload a report screenshot, add optional context, then import the report. After reviewing the structured context, run the full CogniCheck analysis here.</p>
+                <h2 data-i18n="analysis.outputTitle">Analysis output</h2>
+                <p data-i18n="analysis.outputIntro">Upload a report screenshot, add optional context, then import the report. After reviewing the structured context, run the full CogniCheck analysis here.</p>
             </div>
-            <button id="print-report" onclick="printAnalysisReport()" class="button secondary analysis-print-button" style="display: none;">Print Report</button>
+            <div id="analysis-feedback-container"></div>
+            <button id="print-report" onclick="printAnalysisReport()" class="button secondary analysis-print-button" style="display: none;" data-i18n="analysis.printReport">Print Report</button>
             <pre id="json-output" style="display: none;"></pre>
         </div>
     </section>

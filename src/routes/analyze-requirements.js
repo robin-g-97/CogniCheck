@@ -11,7 +11,7 @@ const {
 const router = express.Router();
 
 router.post("/api/analyze-requirements", async (req, res) => {
-  const { text } = req.body;
+  const { text, selectedLanguage } = req.body;
   const requestId = crypto.randomUUID();
   const userEmail = req.sessionEmail || "";
 
@@ -20,21 +20,23 @@ router.post("/api/analyze-requirements", async (req, res) => {
   }
 
   try {
-    const prompt = requirementsBlueprintPrompt(text);
+    const prompt = requirementsBlueprintPrompt(text, selectedLanguage);
 
     await trackLlmInput({
       requestId,
       userEmail,
       mode: "requirements-blueprint",
-      selectedLanguage: "",
+      selectedLanguage,
       input: JSON.stringify({
         prompt,
-        requirementsText: text
+        requirementsText: text,
+        selectedLanguage: selectedLanguage || ""
       })
     });
 
     const data = await callGemini({
-      parts: [{ text: prompt }]
+      parts: [{ text: prompt }],
+      generationConfig: { responseMimeType: "application/json" }
     });
 
     const message = extractGeminiText(data);
@@ -43,7 +45,7 @@ router.post("/api/analyze-requirements", async (req, res) => {
       requestId,
       userEmail,
       mode: "requirements-blueprint",
-      selectedLanguage: "",
+      selectedLanguage,
       output: message
     });
 
@@ -51,17 +53,17 @@ router.post("/api/analyze-requirements", async (req, res) => {
       requestId,
       userEmail,
       mode: "requirements-blueprint",
-      selectedLanguage: "",
+      selectedLanguage,
       success: true
     });
 
-    res.json({ message });
+    res.json({ message, requestId });
   } catch (error) {
     await trackAnalysisEvent({
       requestId,
       userEmail,
       mode: "requirements-blueprint",
-      selectedLanguage: "",
+      selectedLanguage,
       success: false,
       error: error.message
     });

@@ -8,6 +8,7 @@ CogniCheck Server is a Node.js and Express application for running AI-assisted a
 - Screenshot/image upload analysis via Gemini
 - Requirements document analysis for generating blueprint-style output
 - Two-step CogniCheck report analysis: import structured context, then run the final analysis
+- Optional guided feedback after report analysis and blueprint generation
 - Server-side CogniCheck methodology and scoring rubrics loaded from `backend/knowledge/`
 - Concise JSON final analysis output for cognitive load, decision alignment, psychological lens, recommendations, and missing context
 - Static browser pages served from `public/`
@@ -78,7 +79,7 @@ PORT=3000
 
 `RESEND_API_KEY` is required for email login links. `APP_BASE_URL` should be set in Railway so access links use the public site URL. `MAGIC_LINK_SECRET` is recommended for stable, private signing of login links; when it is not set, the server falls back to `APP_PASSWORD`, then `RESEND_API_KEY`.
 
-`DATABASE_URL` enables PostgreSQL-backed analytics. In Railway, set it to `${{Postgres.DATABASE_URL}}` after adding a PostgreSQL service. `OUTPUT_LOGGING_ENABLED=false` disables storing generated LLM inputs and outputs. When logging is enabled, LLM inputs and outputs are linked by `request_id` and include the authenticated login email address when available.
+`DATABASE_URL` enables PostgreSQL-backed analytics and feedback storage. In Railway, set it to `${{Postgres.DATABASE_URL}}` after adding a PostgreSQL service. `OUTPUT_LOGGING_ENABLED=false` disables storing generated LLM inputs and outputs. When logging is enabled, LLM inputs and outputs are linked by `request_id` and include the authenticated login email address when available. Analysis feedback is collected after report analysis and blueprint generation, but it is stored only when `DATABASE_URL` is configured.
 
 `RESEND_API_KEY` enables the homepage contact form and access links to send email directly from the backend. Replace `your_resend_api_key` with your real Resend API key. By default, messages are sent to `robin@cognicheck.tech` from Resend's test sender, `onboarding@resend.dev`. For the most professional setup, verify `cognicheck.tech` in Resend and then set `CONTACT_FROM_EMAIL` to an address on that domain, such as `CogniCheck <contact@cognicheck.tech>`.
 
@@ -145,11 +146,14 @@ TXT supporting files are read in the browser. PDF and DOCX files are sent to Gem
 
 AI responses can occasionally contain invalid JSON, especially malformed escaped characters. The frontend now handles these parsing errors gracefully by showing a retry message and logging only a short raw-response preview in the browser console for debugging.
 
+After a successful final report analysis, users can optionally submit compact guided feedback. The feedback is used to calibrate usefulness, score fairness, main issue detection, recommendation actionability, context match and real workflow relevance. The same lightweight feedback panel is shown after requirements-to-blueprint generation.
+
 ## API Routes
 
 - `POST /analyze` - analyzes an uploaded image with a prompt
 - `POST /api/analyze-report` - imports report context or performs full CogniCheck analysis with server-side prompts
 - `POST /api/analyze-requirements` - analyzes requirements text and returns generated blueprint content
+- `POST /api/analysis-feedback` - stores optional post-output feedback when `DATABASE_URL` is configured
 - `GET /api/analytics/summary` - returns protected PostgreSQL-backed viewer and analysis counts
 - `GET /api/analytics/inputs?limit=20` - returns protected generated LLM input logs
 - `GET /api/analytics/outputs?limit=20` - returns protected generated LLM output logs
