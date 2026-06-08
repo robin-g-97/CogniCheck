@@ -398,7 +398,17 @@ async function renderHomepage() {
     const contentPath = languageCode === "nl"
       ? "/content/homepage.nl.json"
       : "/content/homepage.json";
-    const response = await fetch(contentPath);
+    let response = await fetch(contentPath);
+
+    // Keep the published homepage usable if a localized content file is missing.
+    if (!isJsonResponse(response) && contentPath !== "/content/homepage.json") {
+      response = await fetch("/content/homepage.json");
+    }
+
+    if (!isJsonResponse(response)) {
+      throw new Error("Homepage content request failed.");
+    }
+
     const content = await response.json();
 
     homepageRoot.appendChild(createHero(content.hero));
@@ -407,7 +417,7 @@ async function renderHomepage() {
     });
   } catch (error) {
     homepageRoot.appendChild(createElement("p", {
-      text: "Homepage content could not be loaded."
+      text: window.CogniCheckI18n?.t("homepage.loadError", "Homepage content could not be loaded.") || "Homepage content could not be loaded."
     }));
     console.error("Homepage content failed to load:", error);
   }
@@ -416,4 +426,8 @@ async function renderHomepage() {
 if (homepageRoot) {
   renderHomepage();
   window.addEventListener("cognicheck:languagechange", renderHomepage);
+}
+
+function isJsonResponse(response) {
+  return response.ok && (response.headers.get("content-type") || "").includes("application/json");
 }

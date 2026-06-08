@@ -25,6 +25,7 @@ const CogniCheckI18n = (() => {
       "common.dutch": "Nederlands",
       "common.loading": "Laden...",
       "common.tryAgain": "Probeer het opnieuw.",
+      "homepage.loadError": "Homepage-inhoud kon niet worden geladen.",
 
       "demo.title": "CogniCheck Demo",
       "demo.eyebrow": "CogniCheck Demo",
@@ -239,6 +240,7 @@ const CogniCheckI18n = (() => {
       "common.dutch": "Nederlands",
       "common.loading": "Loading...",
       "common.tryAgain": "Please try again.",
+      "homepage.loadError": "Homepage content could not be loaded.",
 
       "demo.title": "CogniCheck Demo",
       "demo.eyebrow": "CogniCheck Demo",
